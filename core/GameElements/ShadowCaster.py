@@ -1,19 +1,20 @@
-from core.App import AppConfigs as App, pg
+from core.App import AppConfigs as App
 
-from pygame._sdl2 import Renderer, Texture
-import pygame as pg
+from pygame._sdl2 import Texture
+
+from pygame import Surface, Rect, BLENDMODE_BLEND, SRCALPHA
 
 
 class ShadowCaster:
     def init_shadow(self):
         # 1. Создаем маску формы ОДИН РАЗ как текстуру
         # Она должна быть белой (255, 255, 255), чтобы потом легко перекрашивать
-        mask_surf = pg.Surface(self.hitbox.size, pg.SRCALPHA)
+        mask_surf = Surface(self.hitbox.size, SRCALPHA)
         self.draw_shadow_shape(mask_surf, (255, 255, 255, 255))
 
         self._shadow_texture = Texture.from_surface(self.render, mask_surf)
         # Включаем возможность менять прозрачность и цвет
-        self._shadow_texture.blend_mode = pg.BLENDMODE_BLEND
+        self._shadow_texture.blend_mode = BLENDMODE_BLEND
         # self._shadow_texture.blend_mode = 1
 
     def cast_shadow(self):
@@ -36,7 +37,7 @@ class ShadowCaster:
 
                 # 4. Расчет позиции
                 offset = direction.normalized * shadow_len
-                render_rect = pg.Rect((self.pos + offset).xy, self.hitbox.size)
+                render_rect = Rect((self.pos + offset).xy, self.hitbox.size)
 
                 # 5. Отрисовка (происходит на видеокарте)
                 self.render.blit(self._shadow_texture, render_rect)

@@ -28,7 +28,7 @@ class Paddle(Block):
 
     total_width = Heart.W * Default.Health + Heart.Between * (Default.Health - 1)
 
-    def __init__(self, pos, size, color):
+    def __init__(self, pos, size, color, timer):
         super().__init__((0, 0), size, color)
 
         self.speed = Vec2(PlayerSettings.SpeedX, 1)
@@ -38,18 +38,19 @@ class Paddle(Block):
 
         self.hitbox.center = pos
 
-        self.health = Paddle.Default.Health
+        self.health = Paddle.Default.Health - 2
         # self.health = 1
 
         self.minimalHealth = -1
         self.bounces = 2
 
-        self.offset_x = 0
+        self.target_y = self.hitbox.centery
 
         self.DoubleHeight = self.hitbox.h * 2
+        self.H2draw = WindowConfigs.H + self.DoubleHeight
 
         self.score = 0
-        self.Timer = Timer()
+        self.Timer = timer
 
         self.PauseBoards = [
             App.FontS.get_with_bg_texture("paused", "prstart", 12,
@@ -63,6 +64,8 @@ class Paddle(Block):
         self.Damaged = False
         self.SecondsDamaged = 0
 
+        self.smoothness = 15.0
+
     def damaged(self, seconds):
         self.Damaged = True
         self.SecondsDamaged = seconds
@@ -70,14 +73,8 @@ class Paddle(Block):
     def mouse_controls(self):
         target_x = Mouse.pos().x
 
-        # Регулируем плавность: чем больше число, тем резче ракетка.
-        # Умножаем на App.dt, чтобы скорость не зависела от FPS.
-        smoothness = 15.0 * App.dt
-
-        # Ограничиваем t, чтобы он не выскочил за пределы [0, 1]
-
         # Плавно двигаем центр ракетки к мышке
-        self.hitbox.centerx = lerp(self.hitbox.centerx, target_x, smoothness)
+        self.hitbox.centerx = lerp(self.hitbox.centerx, target_x, self.smoothness * App.dt)
 
         # Твои проверки границ WindowConfigs...
         if self.hitbox.left < WindowConfigs.with_player_collision[0]:
@@ -118,7 +115,17 @@ class Paddle(Block):
             self.bounces -= 1
 
     def update(self):
-        if self.is_dead and self.pos.y < WindowConfigs.H + self.DoubleHeight:
+
+        # off update
+        if self.is_overdrawn:
+            return
+
+        self.hitbox.centery = lerp(self.hitbox.centery, self.target_y, self.smoothness * App.dt)
+
+        # if self.is_dead and self.is_drawn:
+        #     self.death()
+
+        if self.is_dead:
             self.death()
 
         if self.Damaged:
@@ -132,8 +139,21 @@ class Paddle(Block):
         elif App.CurrentController == App.ControlMode.Mouse:
             self.mouse_controls()
 
+    @property
+    def is_overdrawn(self):
+        return self.pos.y > self.H2draw
+
+    @property
+    def is_drawn(self):
+        return self.pos.y < self.H2draw
+
     def draw(self):
-        if self.Damaged:
+
+        # off draw
+        if self.is_overdrawn:
+            return
+
+        if self.Damaged or self.is_dead:
             draw_circular(
                 self.render, self.hitbox,
                 color=self.color.rgb, dash_len=15, gap_len=10, width=3, speed=60
@@ -170,5 +190,5 @@ class Paddle(Block):
 
             board.draw(dstrect=(self.hitbox.left, self.hitbox.top - rect.h - 2, rect.w, rect.h))
 
-    def bounce(self, offset_x):
-        self.offset_x = offset_x
+    def bounce(self, y: int | float):
+        self.target_y += y

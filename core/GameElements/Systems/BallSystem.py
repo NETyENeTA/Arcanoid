@@ -90,7 +90,7 @@ class BallSystem:
                 continue
 
             if ball.pos.y > WindowApp.H:
-                if len(self.Balls) > 1:
+                if self.paddle.is_dead or len(self.Balls) > 1:
                     self.Balls.remove(ball)
                 else:
                     ball.hitbox.bottom = WindowApp.bottom

@@ -1,5 +1,6 @@
 from Libraries.Python.List import get_at
 from Libraries.SimplePyGame.Color import Color
+from Libraries.SimplePyGame.DateTime.Timer import Timer
 from core.App import AppConfigs as App, pg
 from GameElements.Paddle import Paddle
 from core.GameElements.HUD import HUD
@@ -29,10 +30,12 @@ class Game:
         App.LightS.add(Vec2(WC.Center[0], WC.bottomLights), Colors.GRAY, render)
         # App.LightS.add(Vec2((WC.Center_right_box[0], WC.bottomLights), 610), Colors.RED, render)
 
+        self.Timer = Timer()
+
         self.player: Paddle = Paddle(
             (App.Resolution.W // 2, App.Resolution.H - PS.Offset_collision[1]),
             (240, 30),
-            Colors.BLACK)
+            Colors.BLACK, self.Timer)
 
         self.player.shadow_info.minimal = 15
 
@@ -90,6 +93,13 @@ class Game:
         if App.cheat == App.cheats[3]:
             App.Runtime.IsDebugging = not App.Runtime.IsDebugging
 
+        # Warn: its just debug need to delete in soon
+        if App.cheat == App.cheats[4]:
+            self.player.bounce(-20)
+
+        if App.cheat == App.cheats[5]:
+            self.player.bounce(20)
+
         if App.cheat in App.cheats:
             App.cheat = ""
 
@@ -121,7 +131,7 @@ class Game:
 
                 if event.key == pg.K_ESCAPE:
                     App.toggle_pause()
-                    self.player.Timer.toggle_pause()
+                    self.Timer.toggle_pause()
 
                 elif event.key == pg.K_BACKSPACE:
                     App.cheat = App.cheat[:-1]

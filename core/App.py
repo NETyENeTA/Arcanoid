@@ -62,7 +62,7 @@ class AppConfigs:
 
     cheats: list[str] = [
         "add ball", "add score",
-        "debug", "debugging", "help"
+        "debug", "debugging", "bounce-up", "bounce-down", "help"
     ]
 
     dt: float = 0

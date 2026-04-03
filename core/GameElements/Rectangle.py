@@ -5,7 +5,6 @@ from Libraries.SimplePyGame.Color import Color, NameSpaces
 from Libraries.SimplePyGame.Screen import Screen
 
 from core.App import AppConfigs as App
-
 from pygame._sdl2.video import Renderer
 
 from Libraries.SimplePyGame.SDL2.Draw import draw_circular_dashed_rect as draw_circular
@@ -51,5 +50,8 @@ class Rectangle:
         self.hitbox.topleft = pos.xy
 
     def draw(self):
+
+        # draw_circular(self.render, self.hitbox, self.color.rgba)
+
         self.render.draw_color = self.color.rgba
         self.render.fill_rect(self.hitbox)

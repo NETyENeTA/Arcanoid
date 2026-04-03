@@ -99,3 +99,9 @@ class Ball(ShadowCaster):
     def draw(self):
         self.render.blit(self.texture, self.hitbox)
         # self.render.draw_rect(self.hitbox)
+
+    def __str__(self):
+        return f"Ball at {self.pos}"
+
+    def __repr__(self):
+        return f"{self.pos.xy}"
