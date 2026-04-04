@@ -2,7 +2,7 @@ from Libraries.Math.Random import randrange_int as rnd
 from Libraries.SimplePyGame.Color import Color, NameSpaces
 from Libraries.SimplePyGame.Colors import Colors
 from core.App import AppConfigs as App
-from core.GameElements.Rectangle import Rectangle, pg
+from Libraries.SimplePyGame.SDL2.UI.Rectangle import Rectangle, pg
 from Libraries.SimplePyGame.Positions import Range
 from core.GameElements.ShadowCaster import ShadowCaster
 

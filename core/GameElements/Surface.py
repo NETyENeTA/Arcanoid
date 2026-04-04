@@ -1,7 +1,6 @@
-from Libraries.SimplePyGame.Color import Color
 from Libraries.SimplePyGame.Screen import Screen
 from Libraries.SimplePyGame.Positions import Vec2
-from core.GameElements.Rectangle import Rectangle, pg
+from Libraries.SimplePyGame.SDL2.UI.Rectangle import Rectangle, pg
 
 
 class Surface(Rectangle):

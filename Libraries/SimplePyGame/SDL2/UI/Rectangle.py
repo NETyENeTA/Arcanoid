@@ -18,7 +18,7 @@ class Rectangle:
                  render: Screen | None = None):
 
         render = render.render if isinstance(render, Screen) else render
-        self.render : Renderer = render if render is None else App.Screen.render
+        self.render : Renderer = render if render else App.Screen.render
 
         pos = pos if isinstance(pos, Vec2) else Vec2(value=pos)
         size = size if isinstance(size, Vec2) else Vec2(value=size)

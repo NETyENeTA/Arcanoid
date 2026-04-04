@@ -1,6 +1,6 @@
 # from sys import flags
 
-import Game as GameCore
+# import Game as GameCore
 
 import pygame as pg
 from pygame._sdl2 import Window, Renderer
@@ -12,8 +12,13 @@ from Libraries.SimplePyGame.UI.Mouse import Mouse
 from core.App import AppConfigs, ScreenLib, WindowConfig as WC
 from core.GameElements.Cursor import Cursor
 from core.GameElements.Systems.LightSystem import LightSystem
+from core.Game import Game
 
 from os.path import dirname, join, abspath
+
+from core.Logo import Logo
+from core.Menu import Menu
+
 
 class Application:
 
@@ -51,8 +56,9 @@ class Application:
         self.sfx()
         self.fonts()
 
-        Mouse.set_cursor_visibility(False)
-        self.Game = GameCore.Game(sc, render)
+        # Mouse.set_cursor_visibility(False)
+        self.Logo = Logo(sc, render)
+        self.Menu = Menu(sc, render)
 
     def sfx(self):
         AppConfigs.sfx = SFXSystem(AppConfigs.Resolution.W)
@@ -76,4 +82,5 @@ class Application:
 
     def start(self):
         AppConfigs.Runtime.IsOn = True
-        self.Game.run()
+        self.Logo.run()
+        self.Menu.run()

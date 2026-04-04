@@ -1,5 +1,4 @@
 from pygame.math import Vector2
-from Libraries.SimplePyGame.Color import NameSpaces
 from Libraries.Animations.Functions.Lerp import lerp
 
 class PositionObject(object):

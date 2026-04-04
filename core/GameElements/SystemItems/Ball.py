@@ -2,7 +2,7 @@ from pygame._sdl2 import Texture, Renderer
 
 from Libraries.SimplePyGame.Positions import Range
 from Libraries.SimplePyGame.SDL2.Draw import draw_dashed_circle
-from core.GameElements.Rectangle import pg, Vec2
+from Libraries.SimplePyGame.SDL2.UI.Rectangle import pg, Vec2
 from Libraries.SimplePyGame.Colors import Colors
 from Libraries.SimplePyGame.Color import Color
 
@@ -10,7 +10,7 @@ from core.App import AppConfigs as App
 
 
 import GameFiles.Configs.WindowApp as WindowApp
-from Libraries.Math.Random import randrange_int as rnd, random_from_list as rfl
+from Libraries.Math.Random import randrange_int as rnd
 from core.GameElements.ShadowCaster import ShadowCaster
 
 

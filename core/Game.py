@@ -81,7 +81,7 @@ class Game:
         test_block[0].health = 3
 
         self.HUD: HUD = HUD()
-        self.BlockS = BlockSystem(test_block)
+        self.BlockS = BlockSystem(test_blocks)
         self.BallS = BallSystem(self.player, self.BlockS, self.end_game, self.pass_level)
 
         self.Texts = [
@@ -284,4 +284,5 @@ class Game:
 
     def run(self):
         print("Start Game")
+        App.Runtime.IsOn = True
         self.update()
