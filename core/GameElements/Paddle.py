@@ -120,7 +120,8 @@ class Paddle(Block):
         if self.is_overdrawn:
             return
 
-        self.hitbox.centery = lerp(self.hitbox.centery, self.target_y, self.smoothness * App.dt)
+        if self.is_alive:
+            self.hitbox.centery = lerp(self.hitbox.centery, self.target_y, self.smoothness * App.dt)
 
         # if self.is_dead and self.is_drawn:
         #     self.death()
@@ -147,6 +148,10 @@ class Paddle(Block):
     def is_drawn(self):
         return self.pos.y < self.H2draw
 
+    @property
+    def info(self):
+        return f"{self.Timer.get_format("%h%:%m%:%s%")} {' ' * (3 - len(str(self.score)))}score:{self.score}"
+
     def draw(self):
 
         # off draw
@@ -170,7 +175,7 @@ class Paddle(Block):
             self.render.fill_rect(pg.Rect(pos, Paddle.Heart.WH))
 
         App.FontS.draw_text(
-            text=f"{self.Timer.get_format("%h%:%m%:%s%")} {' ' * (3 - len(str(self.score)))}score:{self.score}",
+            text= self.info,
             name="prstart",
             size=12,
             color=Colors.BLACK.rgb,

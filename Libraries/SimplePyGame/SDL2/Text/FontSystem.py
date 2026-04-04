@@ -103,3 +103,14 @@ class FontSystem:
 
         texture.draw(dstrect=pg.Rect(pos[0], pos[1], w, h))
         # texture.draw(dstrect=pg.Rect(pos[0], pos[1], surf.get_width(), surf.get_height()))
+
+
+    def get_texture_drew_text(self, text, name, size = None, color=(255, 255, 255)) -> Texture | None:
+
+        if len(text) == 0:
+            return None
+
+        texture = self.get_texture(text, name, size, color)
+
+        return texture
+

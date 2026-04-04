@@ -1,30 +1,56 @@
+
+# Python Lib
 from Libraries.Python.List import get_at
-from Libraries.SimplePyGame.Color import Color
-from Libraries.SimplePyGame.DateTime.Timer import Timer
-from core.App import AppConfigs as App, pg
-from GameElements.Paddle import Paddle
-from core.GameElements.HUD import HUD
 
+
+# SPG Lib
 from Libraries.SimplePyGame.Colors import Colors
-from Libraries.SimplePyGame.Positions import Vec2
+from Libraries.SimplePyGame.Color import Color
 
+from Libraries.SimplePyGame.DateTime.Timer import Timer
+from Libraries.SimplePyGame.Positions import Vec2
+from Libraries.SimplePyGame.SDL2.Draw import draw_dashed_circle
+from Libraries.SimplePyGame.UI.Mouse import Mouse
+
+from Libraries.SimplePyGame.SDL2.Text.Text import Text
+
+
+# Configs & Settings
 import GameFiles.Settings.Player as PS
 import GameFiles.Configs.WindowApp as WC
+
+
+# core.GameElements
+# todo: check if need to delete prefix: "core."
+from core.GameElements.HUD import HUD
+from core.GameElements.Paddle import Paddle
 
 from core.GameElements.Systems.BallSystem import BallSystem
 from core.GameElements.SystemItems.Block import Block
 from core.GameElements.Systems.BlockSystem import BlockSystem
 
-from Libraries.SimplePyGame.UI.Mouse import Mouse
+# Warn!!! "core." is required!!!
+from core.App import AppConfigs as App, pg
+
 
 
 class Game:
     BgColor = Colors.WHITE
 
+    class Status:
+
+        PassedLevel = 2
+        Playing = 1
+        Death = 0
+        GameOver = -1
+
+
     def __init__(self, screen, render):
         print("Initializing Game")
         self.sc = screen
         self.render = render
+
+        self.status = Game.Status.Playing
 
         # App.LightS.add(Vec2(WC.Center_left_box[0], WC.bottomLights), Colors.BLUE, render)
         App.LightS.add(Vec2(WC.Center[0], WC.bottomLights), Colors.GRAY, render)
@@ -55,8 +81,49 @@ class Game:
         test_block[0].health = 3
 
         self.HUD: HUD = HUD()
-        self.BlockS = BlockSystem(test_blocks)
-        self.BallS = BallSystem(self.player, self.BlockS)
+        self.BlockS = BlockSystem(test_block)
+        self.BallS = BallSystem(self.player, self.BlockS, self.end_game, self.pass_level)
+
+        self.Texts = [
+            Text(self.render, Vec2(0, 0), "Tutorial", ("prstart", 48), Color.mono_color(150).rgb),
+            Text(self.render, Vec2(0, 0), "GameOver", ("prstart", 48), Color.mono_color(0).rgb,
+                 False),
+            Text(self.render, Vec2(0, 0), "Value", ("prstart", 24), Color.mono_color(0).rgb,
+                 False),
+            Text(self.render, Vec2(0, 0), "Level Passed", ("prstart", 48), Color.mono_color(0).rgb,
+                 False),
+        ]
+
+        self.Texts[0].rect.center = (Vec2(0, 60) + WC.Center).xy
+        self.Texts[1].rect.center = (Vec2(0, 30) + WC.Center).xy
+        self.Texts[2].rect.center = (Vec2(0, 70) + WC.Center).xy
+        self.Texts[3].rect.center = (Vec2(0, 30) + WC.Center).xy
+
+    def pass_level(self):
+
+        self.Timer.toggle_pause()
+
+        self.status = Game.Status.PassedLevel
+        self.Texts[2].value = self.player.info
+        self.Texts[2].rect.center = (Vec2(0, 70) + WC.Center).xy
+
+        self.Texts[0].is_visible = False
+        self.Texts[2].is_visible = True
+        self.Texts[3].is_visible = True
+
+
+
+
+    def end_game(self):
+
+        self.Timer.toggle_pause()
+
+        self.status = Game.Status.GameOver
+        self.Texts[2].value = self.player.info
+        self.Texts[2].rect.center = (Vec2(0, 70) + WC.Center).xy
+
+        for i in range(3):
+            self.Texts[i].is_visible = not self.Texts[i].is_visible
 
     def update(self):
         while App.Runtime.IsOn:
@@ -69,8 +136,8 @@ class Game:
             if not App.Runtime.IsPause:
 
                 # Debug, light to mouse
-                if App.Runtime.IsDebugging:
-                    App.LightS.Lights[0].pos = pg.mouse.get_pos()
+                # if App.Runtime.IsDebugging:
+                #     App.LightS.Lights[0].pos = pg.mouse.get_pos()
 
                 self.player.update()
                 self.BallS.update()
@@ -131,7 +198,8 @@ class Game:
 
                 if event.key == pg.K_ESCAPE:
                     App.toggle_pause()
-                    self.Timer.toggle_pause()
+                    if self.status not in (Game.Status.GameOver, Game.Status.PassedLevel):
+                        self.Timer.toggle_pause()
 
                 elif event.key == pg.K_BACKSPACE:
                     App.cheat = App.cheat[:-1]
@@ -157,6 +225,9 @@ class Game:
 
     def display(self):
         App.clear(Game.BgColor.rgba)
+
+        for text in self.Texts:
+            text.draw()
 
         self.BlockS.cast_shadows()
         self.BallS.cast_shadows()
@@ -207,6 +278,7 @@ class Game:
 
         if App.Runtime.IsDebugging:
             App.LightS.draw_debug()
+            self.BallS.draw_debug()
 
         App.flip()
 

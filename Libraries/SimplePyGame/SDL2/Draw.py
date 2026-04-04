@@ -4,6 +4,8 @@ from pygame.time import get_ticks
 from Libraries.SimplePyGame.Color import Color
 from Libraries.SimplePyGame.Colors import Colors
 
+from math import sin, cos, pi
+
 
 def draw_horizontal_line(render, x1, x2, y, thickness: int = 1, color: Color | tuple = Colors.BLACK):
     # Устанавливаем цвет
@@ -129,3 +131,44 @@ def draw_animated_dashed_rect(renderer, rect, color=(255, 255, 0),
         if h > 0:
             renderer.fill_rect(Rect(rect.left - width // 2, draw_y, width, h))
             renderer.fill_rect(Rect(rect.right - width // 2, draw_y, width, h))
+
+
+def draw_dashed_circle(renderer, center, radius, color=(0, 255, 0),
+                       dash_len=10, gap_len=10, width=2, speed=60):
+    renderer.draw_color = color
+
+    # 1. Считаем длину окружности
+    circumference = 2 * pi * radius
+    step_len = dash_len + gap_len  # Полный цикл (штрих + пробел)
+
+    # 2. Смещение для анимации "бега"
+    # Переводим время в пиксели смещения, а затем в радианы
+    offset_px = (pg.time.get_ticks() * speed / 1000) % step_len
+    offset_rad = (offset_px / circumference) * (2 * pi)
+
+    # 3. Рисуем сегментами
+    # Количество сегментов (штрихов) на круге
+    num_dashes = int(circumference / step_len)
+
+    for i in range(num_dashes + 1):
+        # Начальный и конечный угол для каждого штриха (в радианах)
+        start_angle = (i * step_len / circumference) * (2 * pi) + offset_rad
+        end_angle = start_angle + (dash_len / circumference) * (2 * pi)
+
+        # Рисуем штрих как несколько маленьких отрезков для гладкости
+        num_segments = 5  # Чем больше, тем плавнее изгиб штриха
+        for j in range(num_segments):
+            seg_start = start_angle + (end_angle - start_angle) * (j / num_segments)
+            seg_end = start_angle + (end_angle - start_angle) * ((j + 1) / num_segments)
+
+            x1 = center[0] + cos(seg_start) * radius
+            y1 = center[1] + sin(seg_start) * radius
+            x2 = center[0] + cos(seg_end) * radius
+            y2 = center[1] + sin(seg_end) * radius
+
+            # В SDL2 Renderer рисуем линию
+            renderer.draw_line((int(x1), int(y1)), (int(x2), int(y2)))
+
+            # Если нужна толщина, можно нарисовать рядом еще линии или fill_rect
+            if width > 1:
+                renderer.fill_rect(pg.Rect(int(x1) - width // 2, int(y1) - width // 2, width, width))

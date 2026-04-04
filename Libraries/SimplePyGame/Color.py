@@ -14,14 +14,49 @@ class Color:
         BLUE = 255
         ALPHA = 255
 
-    def __init__(self, red: int = Default.RED,
+    def __init__(self, red: int | NameSpaces.color = Default.RED,
                  green: int = Default.GREEN,
                  blue: int = Default.BLUE,
                  alpha: int = Default.ALPHA):
-        self.r = red
-        self.g = green
-        self.b = blue
-        self.a = alpha
+
+
+        if isinstance(red, (list, tuple, dict, str)):
+            self.parse(red, instance=self)
+            return
+
+        self.r, self.g, self.b, self.a = red, green, blue, alpha
+
+    @classmethod
+    def parse(cls, value, instance=None):
+        # Если на входе список или кортеж
+        if isinstance(value, (list, tuple)):
+            r, g, b = value[0], value[1], value[2]
+            a = value[3] if len(value) > 3 else cls.Default.ALPHA
+            return cls._setup(r, g, b, a, instance)
+
+        # Если на входе словарь
+        if isinstance(value, dict):
+            r = value.get('r', value.get('red', cls.Default.RED))
+            g = value.get('g', value.get('green', cls.Default.GREEN))
+            b = value.get('b', value.get('blue', cls.Default.BLUE))
+            a = value.get('a', value.get('alpha', cls.Default.ALPHA))
+            return cls._setup(r, g, b, a, instance)
+
+        # Если на входе строка (HEX или CSV)
+        if isinstance(value, str):
+            temp = cls.from_hex(value) if value.startswith('#') else cls.from_string(value)
+            return cls._setup(temp.r, temp.g, temp.b, temp.a, instance)
+
+        # Если ничего не подошло (fallback)
+        return instance if instance else cls()
+
+    @classmethod
+    def _setup(cls, r, g, b, a, instance=None):
+        """Вспомогательный метод, чтобы не дублировать логику применения значений"""
+        if instance:
+            instance.r, instance.g, instance.b, instance.a = r, g, b, a
+            return instance
+        return cls(r, g, b, a)
 
 
     @staticmethod

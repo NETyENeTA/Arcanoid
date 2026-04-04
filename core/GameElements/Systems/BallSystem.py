@@ -1,3 +1,5 @@
+from typing import Callable
+
 from GameFiles.Configs import WindowApp
 from core.GameElements.Systems.BlockSystem import BlockSystem
 from core.GameElements.Paddle import Paddle
@@ -58,7 +60,7 @@ class BallSystem:
 
         return direction
 
-    def __init__(self, paddle: Paddle, block_system: BlockSystem):
+    def __init__(self, paddle: Paddle, block_system: BlockSystem, end_game: Callable, pass_level: Callable):
 
         self.paddle = paddle
 
@@ -66,6 +68,12 @@ class BallSystem:
 
         self.BlockSystem = block_system
         self.Balls = [Ball(Vec2(500, 700), 14, is_sticky=True)]
+
+        self.end_game = end_game
+        self.pass_level = pass_level
+
+        self.is_end_game = False
+        self.is_passed_level = False
 
     def add_ball(self, ball):
         self.Balls.append(ball)
@@ -89,6 +97,11 @@ class BallSystem:
                 ball.hitbox.center = (self.paddle.hitbox.centerx, self.paddle.hitbox.top - ball.radius - 5)
                 continue
 
+            if self.is_passed_level and ball.hitbox.bottom > WindowApp.bottom:
+                ball.direction.reflect_y(True)
+                App.sfx.pos_play("ball hit", ball.pos.x)
+                continue
+
             if ball.pos.y > WindowApp.H:
                 if self.paddle.is_dead or len(self.Balls) > 1:
                     self.Balls.remove(ball)
@@ -104,6 +117,11 @@ class BallSystem:
                 self.paddle.damaged(0.5)
                 App.sfx.pos_play("ball hit", ball.pos.x)
 
+                if self.paddle.is_dead:
+                    self.end_game()
+                    self.is_end_game = True
+
+
             if ball.direction.y > 0 and ball.hitbox.colliderect(self.paddle.hitbox):
                 # ball.direction = self.collide(ball.direction, ball.hitbox, ball.paddle)
                 ball.direction.reflect_y(True)
@@ -113,6 +131,13 @@ class BallSystem:
                 App.sfx.pos_play("ball hit", ball.pos.x)
 
             collision_id = ball.hitbox.collidelist(self.BlockSystem.blocks)
+
+            if self.is_end_game and collision_id != -1:
+                block = self.BlockSystem[collision_id]
+                ball.direction = self.collide(ball.direction, ball.hitbox, block.hitbox)
+                App.sfx.pos_play("ball hit", ball.pos.x)
+                continue
+
             if collision_id != -1:
                 block = self.BlockSystem[collision_id]
                 ball.direction = self.collide(ball.direction, ball.hitbox, block.hitbox)
@@ -122,6 +147,11 @@ class BallSystem:
                     App.sfx.pos_play("ball hit a default block", ball.pos.x)
                     self.BlockSystem.remove(collision_id)
                     self.paddle.score += 10
+
+                    if len(self.BlockSystem.blocks) == 0:
+                        self.pass_level()
+                        self.is_passed_level = True
+
                 else:
                     self.paddle.score += 5
                     App.sfx.pos_play("ball hit", ball.pos.x)
@@ -132,7 +162,20 @@ class BallSystem:
         for ball in self.Balls:
             ball.cast_shadow()
 
-    def draw(self):
+    def draw_debug(self):
 
         for ball in self.Balls:
-            ball.draw()
+            ball.debug_draw()
+
+    def draw(self):
+
+
+        if self.is_passed_level:
+            for ball in self.Balls:
+                ball.draw_dashed()
+
+        else:
+            for ball in self.Balls:
+                ball.draw()
+
+

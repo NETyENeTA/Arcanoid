@@ -1,6 +1,7 @@
 from pygame._sdl2 import Texture, Renderer
 
 from Libraries.SimplePyGame.Positions import Range
+from Libraries.SimplePyGame.SDL2.Draw import draw_dashed_circle
 from core.GameElements.Rectangle import pg, Vec2
 from Libraries.SimplePyGame.Colors import Colors
 from Libraries.SimplePyGame.Color import Color
@@ -98,7 +99,20 @@ class Ball(ShadowCaster):
 
     def draw(self):
         self.render.blit(self.texture, self.hitbox)
-        # self.render.draw_rect(self.hitbox)
+
+    def debug_draw(self):
+        self.render.draw_rect(self.hitbox)
+
+    def draw_dashed(self):
+        draw_dashed_circle(
+            self.render,
+            center=self.center,
+            radius=self.radius,
+            color=self.color.rgba,
+            dash_len=5,
+            gap_len=10,
+            speed=60  # Скорость вращения
+        )
 
     def __str__(self):
         return f"Ball at {self.pos}"

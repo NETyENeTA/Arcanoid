@@ -2,6 +2,10 @@ from pygame.math import Vector2
 from Libraries.SimplePyGame.Color import NameSpaces
 from Libraries.Animations.Functions.Lerp import lerp
 
+class PositionObject(object):
+    def __init__(self, pos: "Vec2.NameSpaces.Value"):
+        self.pos = pos if isinstance(pos, Vec2) else Vec2(pos)
+
 
 class Vec2:
     class NameSpaces:
