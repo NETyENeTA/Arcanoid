@@ -2,6 +2,7 @@
 from core.GameElements.SystemItems.Block import Block, pg, App
 from Libraries.SimplePyGame.Positions import Vec2
 from Libraries.SimplePyGame.Colors import Colors
+from core.GameElements.SystemItems.DestroyingBlock import DestroyingBlock
 
 
 class BlockSystem:
@@ -17,6 +18,8 @@ class BlockSystem:
 
         # all blocks, to not recreate pg.Rect todo add with dynamic
         self._CashedBlocks = [block.hitbox for block in self.Blocks]
+
+        self.DestroyedBlocks: list[DestroyingBlock] = []
 
 
     @property
@@ -43,6 +46,10 @@ class BlockSystem:
         self.Blocks.append(block)
         self._CashedBlocks.append(block.hitbox)
 
+    def kill(self, index):
+        block = self.pop(index)
+        self.DestroyedBlocks.append(DestroyingBlock(block=block))
+
     def remove_block(self, block: Block):
         self.Blocks.remove(block)
         self._CashedBlocks.remove(block.hitbox)
@@ -63,9 +70,25 @@ class BlockSystem:
         for block in self.Blocks:
             block.cast_shadow()
 
+        for block in self.DestroyedBlocks:
+            block.cast_shadow()
+
+    def update(self):
+
+        for block in self.DestroyedBlocks:
+
+            if block.is_gone:
+                self.DestroyedBlocks.remove(block)
+                continue
+
+            block.update()
+
     def draw(self):
 
         for block in self.Blocks:
+            block.draw()
+
+        for block in self.DestroyedBlocks:
             block.draw()
 
 

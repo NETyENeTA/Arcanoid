@@ -1,6 +1,7 @@
 from Libraries.Math.Random import randrange_int as rnd
 from Libraries.SimplePyGame.Color import Color, NameSpaces
 from Libraries.SimplePyGame.Colors import Colors
+from Libraries.SimplePyGame.Screen import Screen
 from core.App import AppConfigs as App
 from Libraries.SimplePyGame.SDL2.UI.Rectangle import Rectangle, pg
 from Libraries.SimplePyGame.Positions import Range
@@ -12,7 +13,7 @@ from Libraries.Python.List import get_at
 class Block(Rectangle, ShadowCaster):
 
 
-    def __init__(self, pos, size, color: Color | NameSpaces.color | None = None, screen: pg.Surface = None,
+    def __init__(self, pos, size, color: Color | NameSpaces.color | None = None, screen: Screen = None,
                  *colors):
         Rectangle.__init__(self, pos, size, color if color else Colors.BLACK
                            , screen if screen else App.Screen.render)
@@ -24,6 +25,7 @@ class Block(Rectangle, ShadowCaster):
 
         self.minimalHealth = 0
         self.health = rnd(1, 3)
+        # self.health = 3
         self.shadow_info = Range(2, 0.1, 30)
 
         self.init_shadow()
@@ -49,11 +51,10 @@ class Block(Rectangle, ShadowCaster):
     def health(self, value):
         self.__health = value
 
-        if not self.DefaultColor:
-            self.color = get_at(self.colors, self.health - 1, self.DefaultColor)
-
         if self.health < self.minimalHealth:
             self.__health = self.minimalHealth
+        elif not self.DefaultColor:
+            self.color = get_at(self.colors, self.health - 1, self.DefaultColor)
 
     @property
     def hp(self):

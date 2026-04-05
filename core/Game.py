@@ -65,17 +65,24 @@ class Game:
 
         self.player.shadow_info.minimal = 15
 
+
+        #todo: Add normal class for Colors of block
         test_blocks = [
             Block(Vec2(i * 110 + 90, j * 50 + 90), Vec2(100, 35), None, None,
                   Color.mono_color_alpha(150), Color.mono_color_alpha(100),
-                  Color.mono_color_alpha(0))
+                  Color.mono_color_alpha(0), Color.mono_color_alpha(150))
             for i in range(13) for j in range(5)
         ]
 
         test_block = [
             Block(Vec2(90, 90), Vec2(1400, 300), None, None,
                   Color.mono_color_alpha(150), Color.mono_color_alpha(100),
-                  Color.mono_color_alpha(0))
+                  Color.mono_color_alpha(0), Color.mono_color_alpha(150))
+        ]
+
+        rgb_test_block = [
+            Block(Vec2(90, 90), Vec2(1400, 300), None, None,
+                  Colors.RED, Colors.BLUE, Colors.GREEN, Colors.YELLOW)
         ]
 
         test_block[0].health = 3
@@ -137,9 +144,11 @@ class Game:
 
                 # Debug, light to mouse
                 # if App.Runtime.IsDebugging:
-                #     App.LightS.Lights[0].pos = pg.mouse.get_pos()
+                    # App.LightS.Lights[0].pos = Mouse.pos()
+                    # self.BallS.Balls[0].hitbox.center = Mouse.pos().xy
 
                 self.player.update()
+                self.BlockS.update()
                 self.BallS.update()
                 self.HUD.update()
 

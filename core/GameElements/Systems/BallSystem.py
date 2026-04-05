@@ -145,7 +145,7 @@ class BallSystem:
 
                 if block.is_dead:
                     App.sfx.pos_play("ball hit a default block", ball.pos.x)
-                    self.BlockSystem.remove(collision_id)
+                    self.BlockSystem.kill(collision_id)
                     self.paddle.score += 10
 
                     if len(self.BlockSystem.blocks) == 0:
