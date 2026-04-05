@@ -86,7 +86,7 @@ class Game:
 
         self.Texts = [
             Text(self.render, Vec2(0, 0), "Tutorial", ("prstart", 48), Color.mono_color(150).rgb),
-            Text(self.render, Vec2(0, 0), "GameOver", ("prstart", 48), Color.mono_color(0).rgb,
+            Text(self.render, Vec2(0, 0), "Game Over", ("prstart", 48), Color.mono_color(0).rgb,
                  False),
             Text(self.render, Vec2(0, 0), "Value", ("prstart", 24), Color.mono_color(0).rgb,
                  False),
@@ -205,6 +205,9 @@ class Game:
                     App.cheat = App.cheat[:-1]
 
                 elif event.key == pg.K_TAB:
+                    App.AudioS.play_next()
+
+                elif event.key == pg.K_LSHIFT:
                     self.auto_complete()
 
                 elif event.key == pg.K_TAB:

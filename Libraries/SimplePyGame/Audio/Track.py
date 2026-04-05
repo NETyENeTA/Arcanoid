@@ -18,8 +18,8 @@ class Track:
 
     @staticmethod
     def play():
-        # mixer.music.play()
-        pass
+        mixer.music.play()
+        # pass
 
     @property
     def busy(self):

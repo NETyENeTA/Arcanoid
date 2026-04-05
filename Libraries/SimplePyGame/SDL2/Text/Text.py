@@ -4,23 +4,32 @@ from pygame import Rect
 from Libraries.SimplePyGame.Color import Color, NameSpaces as ColorNameSpaces
 from Libraries.SimplePyGame.Positions import Vec2
 from Libraries.SimplePyGame.SDL2.Text.DynamicText import DynamicText
+from Libraries.SimplePyGame.SDL2.Text.FontInfo import FontInfo
 
 from core.App import AppConfigs as App
 
 
-class Text(DynamicText):
+class Text:
 
-    def __init__(self, render: Renderer, pos, value, font, color: Color | ColorNameSpaces.color, visible: bool = True):
-
-        # del self.__pos #Not need, its get from rect (rectangle properties)
+    def __init__(self, render: Renderer, pos, value, font: FontInfo | dict | list,
+                 color: Color | ColorNameSpaces.color, visible: bool = True):
 
         self._initialized = False
 
+        pos = pos.xy if isinstance(pos, Vec2) else pos
+
         self.texture: Texture | None = None
-        self.rect: Rect = Rect(pos.xy, (0, 0))
+        self.rect: Rect = Rect(pos, (0, 0))
         self.render: Renderer = render
 
-        super().__init__(pos, value, font, color, visible)
+        self.font = font if isinstance(font, FontInfo) else (FontInfo.from_dict(font) if
+                                                             isinstance(font, dict) else FontInfo.from_sequence(font))
+
+        _color = color if isinstance(color, Color) else Color(color)
+        self.old_color = _color
+        self.color = _color
+        self.value = value
+        self.is_visible = visible
 
         self.generate_texture()
         self._initialized = True
@@ -42,12 +51,28 @@ class Text(DynamicText):
 
     @pos.setter
     def pos(self, value: Vec2):
+
         if isinstance(value, Vec2):
             self.rect.topleft = value.xy
 
         elif isinstance(value, tuple):
             self.rect.topleft = value
 
+
+    @property
+    def color(self):
+        return self.__color
+
+    @color.setter
+    def color(self, value):
+        if isinstance(value, Color):
+            self.__color = value
+        else:
+            self.__color = Color.parse(value)
+
+        if getattr(self, '_initialized', False) and self.old_color != self.color:
+            self.generate_texture()
+            self.old_color = self.color
 
     @property
     def value(self):

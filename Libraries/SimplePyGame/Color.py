@@ -1,4 +1,4 @@
-from symtable import Class
+
 
 class NameSpaces:
 
@@ -25,6 +25,28 @@ class Color:
             return
 
         self.r, self.g, self.b, self.a = red, green, blue, alpha
+
+    def __eq__(self, other):
+
+        if not isinstance(other, (Color, tuple, list, dict)):
+            return NotImplemented  # Дает Python шанс попробовать другое сравнение
+
+        # Проверяем, является ли другой объект тоже цветом
+        if isinstance(other, Color):
+            return self.rgba == other.rgba
+
+        # Позволяем сравнивать с кортежами или списками (для удобства)
+        if isinstance(other, (tuple, list)):
+            # Сравниваем только имеющиеся элементы (RGB или RGBA)
+            return self.rgba[:len(other)] == tuple(other)
+
+        return False
+
+    def __ne__(self, other):
+        result = self.__eq__(other)
+        if result is NotImplemented:
+            return NotImplemented
+        return not result
 
     @classmethod
     def parse(cls, value, instance=None):

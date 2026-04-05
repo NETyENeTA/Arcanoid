@@ -38,7 +38,7 @@ class Paddle(Block):
 
         self.hitbox.center = pos
 
-        self.health = Paddle.Default.Health - 2
+        self.health = Paddle.Default.Health
         # self.health = 1
 
         self.minimalHealth = -1
@@ -150,7 +150,7 @@ class Paddle(Block):
 
     @property
     def info(self):
-        return f"{self.Timer.get_format("%h%:%m%:%s%")} {' ' * (3 - len(str(self.score)))}score:{self.score}"
+        return f"{self.Timer.get_format("%h%.%m%.%s%")} {' ' * (3 - len(str(self.score)))}score:{self.score}"
 
     def draw(self):
 
