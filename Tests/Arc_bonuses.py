@@ -94,11 +94,27 @@ while running:
         spawn_bonus(hit_rect.center)
 
     # Логика и отрисовка бонусов (Вращение по Y)
-    rotation_angle += 0.1
-    scale_factor = math.sin(rotation_angle)  # Значение от -1 до 1
+    # rotation_angle += 0.1
+    # scale_factor = math.sin(rotation_angle)  # Значение от -1 до 1
+    #
+    # rotation_angle += 0.1
+    # scale_factor = math.sin(rotation_angle)  # Значение от -1 до 1
 
-    rotation_angle += 0.1
-    scale_factor = math.sin(rotation_angle)  # Значение от -1 до 1
+    # # В начале цикла (где расчеты)
+    # time_ms = pygame.time.get_ticks()
+    # # scale_factor меняется от -1 до 1
+    # scale_factor = math.sin(time_ms / 250)
+    # # Чем ближе масштаб к 0, тем сильнее "блик" (яркость)
+    # flash_intensity = int((1 - abs(scale_factor)) * 150)
+
+    # В начале цикла (где расчеты)
+    # time_ms = pygame.time.get_ticks()
+    # # scale_factor для ширины (от -1 до 1)
+    # scale_raw = math.sin(time_ms / 400)
+    # scale_factor = abs(scale_raw)
+    #
+    # # Интенсивность блика: максимум (180), когда бонус ребром (scale_factor близок к 0)
+    # flash_alpha = int((1 - scale_factor) * 180)
 
     # for bonus in bonuses[:]:
     #     bonus['rect'].y += BONUS_FALL_SPEED
@@ -130,21 +146,44 @@ while running:
     #     elif bonus['rect'].top > HEIGHT:
     #         bonuses.remove(bonus)
 
+    # В начале цикла (где расчеты)
+    time_ms = pygame.time.get_ticks()
+    # Обычный sin дает значение от -1 до 1
+    raw_sin = math.sin(time_ms / 250)
+    scale_factor = abs(raw_sin)  # Ширина всегда положительная
+
     for bonus in bonuses[:]:
         bonus['rect'].y += BONUS_FALL_SPEED
 
-        # Определяем цвет
-        b_color = GREEN if bonus['type'] == 'wide' else YELLOW
+        # Базовый цвет (зеленый или желтый)
+        base_color = GREEN if bonus['type'] == 'wide' else YELLOW
 
-        # Эффект вращения: создаем поверхность и сжимаем её по ширине
+        # --- ЭФФЕКТ ЗАДНЕЙ СТОРОНЫ ---
+        if raw_sin > 0:
+            # Лицевая сторона: обычный цвет + блик при повороте
+            display_color = base_color
+            flash_alpha = int((1 - scale_factor) * 150)
+        else:
+            # Задняя сторона (sin < 0): делаем цвет темнее (умножаем компоненты на 0.6)
+            display_color = (int(base_color[0] * 0.6), int(base_color[1] * 0.6), int(base_color[2] * 0.6))
+            flash_alpha = 0  # На задней стороне блик обычно не виден
+
+        # 1. Рисуем бонус
         temp_surf = pygame.Surface((25, 25), pygame.SRCALPHA)
-        pygame.draw.rect(temp_surf, b_color, (0, 0, 25, 25), border_radius=5)
+        pygame.draw.rect(temp_surf, display_color, (0, 0, 25, 25), border_radius=5)
 
-        # Масштабируем ширину (имитация поворота по Y)
-        new_w = max(1, int(abs(scale_factor) * 25))
+        # 2. Накладываем блик (только для лицевой стороны)
+        if flash_alpha > 0:
+            flash_surf = pygame.Surface((25, 25), pygame.SRCALPHA)
+            pygame.draw.rect(flash_surf, (255, 255, 255), (0, 0, 25, 25), border_radius=5)
+            flash_surf.set_alpha(flash_alpha)
+            temp_surf.blit(flash_surf, (0, 0))
+
+        # 3. Масштабируем ширину
+        new_w = max(1, int(scale_factor * 25))
         rotated_surf = pygame.transform.scale(temp_surf, (new_w, 25))
 
-        # Центрируем сжатую картинку на месте бонуса
+        # 4. Центрируем и рисуем
         rot_rect = rotated_surf.get_rect(center=bonus['rect'].center)
         screen.blit(rotated_surf, rot_rect)
 
