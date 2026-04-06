@@ -7,7 +7,7 @@ from Libraries.SimplePyGame.SDL2.UI.Button import Button
 from Libraries.SimplePyGame.SDL2.UI.ButtonColors import ButtonColors
 from Libraries.SimplePyGame.SDL2.UI.TextButton import TextButton
 from Libraries.SimplePyGame.SDL2.UI.TextButtonColors import TextButtonColors
-from core.App import AppConfigs as App
+from core.App import AppConfigs as App, AppConfigs
 
 import pygame as pg
 
@@ -24,11 +24,11 @@ class Menu:
         print("Hello, World!")
 
     def continue_game(self):
-        self.Game.run()
+        self.Game.continue_game()
 
     def new_game(self):
         self.Game = Game(self.screen, self.render)
-        self.continue_game()
+        self.Game.run()
         self.buttons[1].switch(False)
 
     def __init__(self, screen, render):
@@ -36,8 +36,9 @@ class Menu:
         self.render = render
 
         self.On = True
-
         self.Game: Game | None = None
+
+        App.AudioS.volume = 0
 
         btn_color = ButtonColors(
             Colors.BLACK,

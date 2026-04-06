@@ -4,8 +4,6 @@ from Libraries.SimplePyGame.Audio.Track import Track, mixer
 
 class AudioSystem:
 
-
-
     def __init__(self):
         mixer.init()
         self.Player = PlayList("../GameFiles/Media/audio/music")

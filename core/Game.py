@@ -294,7 +294,13 @@ class Game:
 
         App.flip()
 
-    def run(self):
-        print("Start Game")
+    def continue_game(self):
+        print("continue game")
         App.Runtime.IsOn = True
+        self.update()
+
+    def run(self):
+        print("Start new Game")
+        App.Runtime.IsOn = True
+        App.Runtime.IsPause = False
         self.update()

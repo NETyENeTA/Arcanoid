@@ -92,9 +92,6 @@ class AppConfigs:
     def seconds():
         return pg.time.get_ticks() / 1000
 
-
-
-
     @staticmethod
     def toggle_pause():
         AppConfigs.Runtime.IsPause = not AppConfigs.Runtime.IsPause
@@ -116,7 +113,7 @@ class AppConfigs:
 
     @staticmethod
     def stop():
-        print("Stopping")
+        print("Game on pause")
         AppConfigs.Runtime.IsOn = False
 
     @staticmethod
