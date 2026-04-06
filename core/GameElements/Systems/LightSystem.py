@@ -1,6 +1,6 @@
 from Libraries.SimplePyGame.Color import Color
 from Libraries.SimplePyGame.Positions import Vec2
-from core.GameElements.SystemItems.Light import Light
+from core.GameElements.Systems.Items.Light import Light
 
 
 class LightSystem:

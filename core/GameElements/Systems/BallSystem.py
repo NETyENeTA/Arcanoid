@@ -3,7 +3,7 @@ from typing import Callable
 from GameFiles.Configs import WindowApp
 from core.GameElements.Systems.BlockSystem import BlockSystem
 from core.GameElements.Paddle import Paddle
-from core.GameElements.SystemItems.Ball import Ball, pg, Vec2
+from core.GameElements.Systems.Items.Ball import Ball, pg, Vec2
 from core.GameElements.HUD import HUD
 
 from core.App import AppConfigs as App

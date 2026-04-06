@@ -9,7 +9,7 @@ from core.GameElements.ShadowCaster import ShadowCaster
 
 
 from core.App import AppConfigs as App
-from core.GameElements.SystemItems.Block import Block
+from core.GameElements.Systems.Items.Block import Block
 
 
 class DestroyingBlock(Rectangle, ShadowCaster):

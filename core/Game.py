@@ -9,7 +9,6 @@ from Libraries.SimplePyGame.Color import Color
 
 from Libraries.SimplePyGame.DateTime.Timer import Timer
 from Libraries.SimplePyGame.Positions import Vec2
-from Libraries.SimplePyGame.SDL2.Draw import draw_dashed_circle
 from Libraries.SimplePyGame.UI.Mouse import Mouse
 
 from Libraries.SimplePyGame.SDL2.Text.Text import Text
@@ -26,7 +25,7 @@ from core.GameElements.HUD import HUD
 from core.GameElements.Paddle import Paddle
 
 from core.GameElements.Systems.BallSystem import BallSystem
-from core.GameElements.SystemItems.Block import Block
+from core.GameElements.Systems.Items.Block import Block
 from core.GameElements.Systems.BlockSystem import BlockSystem
 
 # Warn!!! "core." is required!!!

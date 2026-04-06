@@ -1,8 +1,8 @@
 
-from core.GameElements.SystemItems.Block import Block, pg, App
+from core.GameElements.Systems.Items.Block import Block, pg, App
 from Libraries.SimplePyGame.Positions import Vec2
 from Libraries.SimplePyGame.Colors import Colors
-from core.GameElements.SystemItems.DestroyingBlock import DestroyingBlock
+from core.GameElements.Systems.Items.DestroyingBlock import DestroyingBlock
 
 
 class BlockSystem:
