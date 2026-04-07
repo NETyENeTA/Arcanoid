@@ -1,5 +1,6 @@
 import pygame as pg
 
+from Libraries.SimplePyGame.Colors import Colors
 from Libraries.SimplePyGame.Positions import Vec2
 from Libraries.SimplePyGame.Color import Color, NameSpaces
 from Libraries.SimplePyGame.Screen import Screen
@@ -11,27 +12,37 @@ from Libraries.SimplePyGame.SDL2.Draw import draw_circular_dashed_rect as draw_c
 
 
 class Rectangle:
+    class Default:
+
+        Color = Colors.BLACK
+
 
     def __init__(self,
                  pos: Vec2 | Vec2.NameSpaces.Value, size: Vec2 | Vec2.NameSpaces.Value,
                  color: Color | NameSpaces.color = None,
-                 render: Screen | None = None):
+                 render: Screen | Renderer = None):
 
-        render = render.render if isinstance(render, Screen) else render
+        # todo: Normilie render, mb create Screen and Screen.window, Screem.render;
+        #  and render separately.
+        render: Renderer = render.render if isinstance(render, Screen) else render
         self.render : Renderer = render if render else App.Screen.render
 
         pos = pos if isinstance(pos, Vec2) else Vec2(value=pos)
         size = size if isinstance(size, Vec2) else Vec2(value=size)
 
         self.hitbox = pg.Rect(pos.xy, size.xy)
+        self.color = self.Default.Color if color is None else self._parse_color(color)
 
+    @staticmethod
+    def _parse_color(color):
         if isinstance(color, (list, tuple)):
             color = Color(*color)
 
         elif isinstance(color, dict):
             color = Color(**color)
 
-        self.color = color
+        return color
+
 
     @property
     def center(self) -> Vec2:

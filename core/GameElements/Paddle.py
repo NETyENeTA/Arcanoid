@@ -63,6 +63,17 @@ class Paddle(Block):
 
         self.smoothness = 15.0
 
+    def expand(self, value: int | float) -> None:
+        '''
+        Expands the paddle on x-axis with given value
+        :param value:
+        :return: None
+        '''
+
+        self.hitbox.w += value
+        self.hitbox.x -= value / 2
+
+
     def damaged(self, seconds):
         self.Damaged = True
         self.SecondsDamaged = seconds

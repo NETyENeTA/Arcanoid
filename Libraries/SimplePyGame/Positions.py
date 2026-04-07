@@ -7,6 +7,9 @@ class PositionObject(object):
 
 
 class Vec2:
+    Zero: "Vec2"
+    One: "Vec2"
+
     class NameSpaces:
         Value = tuple[int, int] | tuple[float, float] | list[float] | list[int] | dict
 
@@ -295,6 +298,11 @@ class Vec2:
 
     def __str__(self):
         return f"Vec2({self.x}; {self.y})"
+
+
+# Warn, mb it need to replace
+Vec2.Zero = Vec2(0, 0)
+Vec2.One = Vec2(1, 1)
 
 
 class Range:

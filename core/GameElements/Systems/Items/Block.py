@@ -25,7 +25,7 @@ class Block(Rectangle, ShadowCaster):
 
         self.minimalHealth = 0
         self.health = rnd(1, 3)
-        # self.health = 3
+        self.health = 1
         self.shadow_info = Range(2, 0.1, 30)
 
         self.init_shadow()

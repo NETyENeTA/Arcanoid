@@ -25,6 +25,7 @@ from core.GameElements.HUD import HUD
 from core.GameElements.Paddle import Paddle
 
 from core.GameElements.Systems.BallSystem import BallSystem
+from core.GameElements.Systems.BonusSystem import BonusSystem
 from core.GameElements.Systems.Items.Block import Block
 from core.GameElements.Systems.BlockSystem import BlockSystem
 
@@ -87,7 +88,8 @@ class Game:
         test_block[0].health = 3
 
         self.HUD: HUD = HUD()
-        self.BlockS = BlockSystem(test_blocks)
+        self.BonusS = BonusSystem(self.player)
+        self.BlockS = BlockSystem(test_blocks, self.BonusS)
         self.BallS = BallSystem(self.player, self.BlockS, self.end_game, self.pass_level)
 
         self.Texts = [
@@ -148,6 +150,7 @@ class Game:
 
                 self.player.update()
                 self.BlockS.update()
+                self.BonusS.update()
                 self.BallS.update()
                 self.HUD.update()
 
@@ -240,6 +243,7 @@ class Game:
         for text in self.Texts:
             text.draw()
 
+        self.BonusS.cast_shadows()
         self.BlockS.cast_shadows()
         self.BallS.cast_shadows()
         self.player.cast_shadow()
@@ -248,6 +252,7 @@ class Game:
 
         self.BallS.draw()
         self.BlockS.draw()
+        self.BonusS.draw()
 
         App.Cursor.draw_center()
 
