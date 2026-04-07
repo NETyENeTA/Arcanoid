@@ -8,7 +8,7 @@ from core.GameElements.Systems.Items.DestroyingBlock import DestroyingBlock
 
 
 class BlockSystem:
-    def __init__(self, blocks: list[Block] | None = None, bonus_system: BonusSystem = None, render: Renderer = None):
+    def __init__(self, bonus_system: BonusSystem, blocks: list[Block] | None = None, render: Renderer = None):
 
         self.render = render if render else App.Screen.render
 
@@ -23,7 +23,7 @@ class BlockSystem:
 
         self.DestroyedBlocks: list[DestroyingBlock] = []
 
-        self.BonusS = bonus_system
+        self.BonusSystem = bonus_system
 
 
     @property
@@ -53,7 +53,7 @@ class BlockSystem:
     def kill(self, index):
         block = self.pop(index)
         self.DestroyedBlocks.append(DestroyingBlock(block=block))
-        self.BonusS.spawn(block.center)
+        self.BonusSystem.spawn(block.center)
 
     def remove_block(self, block: Block):
         self.Blocks.remove(block)

@@ -1,7 +1,5 @@
-
 # Python Lib
 from Libraries.Python.List import get_at
-
 
 # SPG Lib
 from Libraries.SimplePyGame.Colors import Colors
@@ -13,11 +11,9 @@ from Libraries.SimplePyGame.UI.Mouse import Mouse
 
 from Libraries.SimplePyGame.SDL2.Text.Text import Text
 
-
 # Configs & Settings
 import GameFiles.Settings.Player as PS
 import GameFiles.Configs.WindowApp as WC
-
 
 # core.GameElements
 # todo: check if need to delete prefix: "core."
@@ -33,7 +29,6 @@ from core.GameElements.Systems.BlockSystem import BlockSystem
 from core.App import AppConfigs as App, pg
 
 
-
 class Game:
     BgColor = Colors.WHITE
 
@@ -43,7 +38,6 @@ class Game:
         Playing = 1
         Death = 0
         GameOver = -1
-
 
     def __init__(self, screen, render):
         print("Initializing Game")
@@ -65,8 +59,7 @@ class Game:
 
         self.player.shadow_info.minimal = 15
 
-
-        #todo: Add normal class for Colors of block
+        # todo: Add normal class for Colors of block
         test_blocks = [
             Block(Vec2(i * 110 + 90, j * 50 + 90), Vec2(100, 35), None, None,
                   Color.mono_color_alpha(150), Color.mono_color_alpha(100),
@@ -88,8 +81,8 @@ class Game:
         test_block[0].health = 3
 
         self.HUD: HUD = HUD()
-        self.BonusS = BonusSystem(self.player)
-        self.BlockS = BlockSystem(test_blocks, self.BonusS)
+        self.BonusS = BonusSystem(self.player, self.add_ball, self.add_sticky_ball)
+        self.BlockS = BlockSystem(self.BonusS, test_blocks)
         self.BallS = BallSystem(self.player, self.BlockS, self.end_game, self.pass_level)
 
         self.Texts = [
@@ -107,6 +100,14 @@ class Game:
         self.Texts[2].rect.center = (Vec2(0, 70) + WC.Center).xy
         self.Texts[3].rect.center = (Vec2(0, 30) + WC.Center).xy
 
+    def add_sticky_ball(self, radius=14):
+        print("123")
+        self.BallS.add(Vec2.Zero, radius)
+
+    def add_ball(self, radius=14):
+        pos = self.BallS.Balls[-1].pos
+        self.BallS.add(pos, radius, False)
+
     def pass_level(self):
 
         self.Timer.toggle_pause()
@@ -118,9 +119,6 @@ class Game:
         self.Texts[0].is_visible = False
         self.Texts[2].is_visible = True
         self.Texts[3].is_visible = True
-
-
-
 
     def end_game(self):
 
@@ -142,11 +140,10 @@ class Game:
 
             self.events()
             if not App.Runtime.IsPause:
-
                 # Debug, light to mouse
                 # if App.Runtime.IsDebugging:
-                    # App.LightS.Lights[0].pos = Mouse.pos()
-                    # self.BallS.Balls[0].hitbox.center = Mouse.pos().xy
+                # App.LightS.Lights[0].pos = Mouse.pos()
+                # self.BallS.Balls[0].hitbox.center = Mouse.pos().xy
 
                 self.player.update()
                 self.BlockS.update()
@@ -218,6 +215,10 @@ class Game:
                 elif event.key == pg.K_TAB:
                     App.AudioS.play_next()
 
+                elif event.key == pg.K_SPACE:
+                    if not self.BonusS.is_check_bonus_in(BonusSystem.Types.ADD_STICKY_BALL):
+                        self.BonusS.is_stickyBall_here = False
+
                 elif event.key == pg.K_LSHIFT:
                     self.auto_complete()
 
@@ -259,9 +260,8 @@ class Game:
         self.HUD.draw()
 
         if App.Runtime.IsDebug and App.Runtime.IsPause:
-
             matches = self.get_matches()
-            helper = [cheat for cheat in App.cheats if cheat != 'help' or cheat != App.cheat]\
+            helper = [cheat for cheat in App.cheats if cheat != 'help' or cheat != App.cheat] \
                 if App.cheat == "help" else matches
 
             # print(helper, App.cheat, get == App.cheat)
@@ -274,7 +274,6 @@ class Game:
                 pos=(WC.debug_matches[0], WC.debug_matches[1] - len(matches) * 10 - len(helper) * 30),
             )
 
-
             App.FontS.draw_text(
                 text=f"{get_at(matches, 0, 'Type something, cheat engine 1.0')}",
                 name="koulen",
@@ -282,7 +281,6 @@ class Game:
                 color=(150, 150, 150),
                 pos=WC.debug_text
             )
-
 
             App.FontS.draw_text(
                 text=f"{App.cheat}",

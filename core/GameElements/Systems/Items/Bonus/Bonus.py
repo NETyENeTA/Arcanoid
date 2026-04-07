@@ -15,9 +15,10 @@ from core.App import AppConfigs as App
 class Bonus(Rectangle, ShadowCaster):
     _Texture_Cashe = {}
 
-    def __init__(self, size, color: BonusColors, pos=Vec2.Zero, command: Command = None, render=None):
+    def __init__(self, _type: int, size, color: BonusColors, pos=Vec2.Zero, command: Command = None, render=None, ):
         super().__init__(pos, size, None, render)
         self.hitbox.center = pos.xy
+        self.type = _type
 
         self.Command = command
         self.color = color

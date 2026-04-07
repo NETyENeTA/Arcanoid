@@ -3,6 +3,7 @@ from typing import Callable
 from GameFiles.Configs import WindowApp
 from core.GameElements.Systems.BlockSystem import BlockSystem
 from core.GameElements.Paddle import Paddle
+from core.GameElements.Systems.BonusSystem import BonusSystem
 from core.GameElements.Systems.Items.Ball import Ball, pg, Vec2
 from core.GameElements.HUD import HUD
 
@@ -77,9 +78,13 @@ class BallSystem:
 
     def add_ball(self, ball):
         self.Balls.append(ball)
+        if ball.is_sticky:
+            self.BlockSystem.BonusSystem.is_stickyBall_here = True
 
-    def add(self, pos: Vec2 | tuple[int, int], radius: int):
-        self.add_ball(Ball(pos, radius, is_sticky=True))
+    def add(self, pos: Vec2 | tuple[int, int], radius: int, is_sticky: bool = True):
+        self.add_ball(Ball(pos, radius, is_sticky=is_sticky))
+        if is_sticky:
+            self.BlockSystem.BonusSystem.is_stickyBall_here = True
 
     def get_paddle_direction(self, x_ball, x_player) -> float:
         sub = x_ball - x_player
@@ -155,6 +160,7 @@ class BallSystem:
                 else:
                     self.paddle.score += 5
                     App.sfx.pos_play("ball hit", ball.pos.x)
+                    self.BlockSystem.BonusSystem.spawn(block.center, 0.1)
 
 
 

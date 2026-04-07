@@ -10,19 +10,32 @@ from core.GameElements.Systems.Items.Bonus.BonusColors import BonusColors
 class Bonuses:
     class Default:
         SIZE = Vec2.One * 35
-        COLOR_WIDE_PADDLE = BonusColors(Colors.GREEN, Colors.WHITE, Colors.BLACK)
-        COLOR_SPEED_BALL = BonusColors(Colors.YELLOW, Colors.WHITE, Colors.BLACK)
 
-    # Wide_Paddle = Bonus(DEFAULT_SIZE, )
-    # Speed_Ball = Bonus(DEFAULT_SIZE)
-
-    @staticmethod
-    def wide_paddle(pos: Vec2, command: Command = None) -> Bonus:
-        return Bonus(size=Bonuses.Default.SIZE, color=Bonuses.Default.COLOR_WIDE_PADDLE, pos=pos, command=command)
+        class Color:
+            WIDE_PADDLE = BonusColors(Colors.GREEN, Colors.WHITE, Colors.BLACK)
+            SPEED_BALL = BonusColors(Colors.YELLOW, Colors.WHITE, Colors.BLACK)
+            ADDED_BALL = BonusColors(Colors.BLUE, Colors.WHITE, Colors.BLACK)
+            ADDED_STICKY_BALL = BonusColors(Colors.CYAN, Colors.WHITE, Colors.BLACK)
 
     @staticmethod
-    def speed_ball(pos: Vec2, command: Command = None) -> Bonus:
-        return Bonus(size=Bonuses.Default.SIZE, color=Bonuses.Default.COLOR_SPEED_BALL, pos=pos, command=command)
+    def wide_paddle(pos: Vec2, _type: int, command: Command = None) -> Bonus:
+        return Bonus(size=Bonuses.Default.SIZE, color=Bonuses.Default.Color.WIDE_PADDLE, pos=pos, command=command,
+                     _type=_type)
+
+    @staticmethod
+    def speed_ball(pos: Vec2, _type: int, command: Command = None) -> Bonus:
+        return Bonus(size=Bonuses.Default.SIZE, color=Bonuses.Default.Color.SPEED_BALL, pos=pos, command=command,
+                     _type=_type)
+
+    @staticmethod
+    def add_ball(pos: Vec2, _type: int, command: Command = None) -> Bonus:
+        return Bonus(size=Bonuses.Default.SIZE, color=Bonuses.Default.Color.ADDED_BALL, pos=pos, command=command,
+                     _type=_type)
+
+    @staticmethod
+    def add_sticky_ball(pos: Vec2, _type: int, command: Command = None) -> Bonus:
+        return Bonus(size=Bonuses.Default.SIZE, color=Bonuses.Default.Color.ADDED_STICKY_BALL, pos=pos, command=command,
+                     _type=_type)
 
 
 def main():
