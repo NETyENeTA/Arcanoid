@@ -1,6 +1,6 @@
 # Python Lib
 from Event.Event import Event
-from Libraries.Python.Command import Command
+from Event.CommandStuff.Command import Command
 from Libraries.Python.List import get_at
 
 # SPG Lib
@@ -17,7 +17,6 @@ from Libraries.SimplePyGame.SDL2.Text.Text import Text
 import GameFiles.Settings.Player as PS
 import GameFiles.Configs.WindowApp as WC
 from core.GameElements.Systems.GunSystem import GunSystem
-from core.GameElements.Systems.Items.Gun import Gun
 
 # core.GameElements
 # todo: check if need to delete prefix: "core."
@@ -50,9 +49,9 @@ class Game:
 
         self.status = Game.Status.Playing
 
-        # App.LightS.add(Vec2(WC.Center_left_box[0], WC.bottomLights), Colors.BLUE, render)
+        App.LightS.add(Vec2(WC.Center_left_box[0], WC.bottomLights), Colors.BLUE, render)
         App.LightS.add(Vec2(WC.Center[0], WC.bottomLights), Colors.GRAY, render)
-        # App.LightS.add(Vec2((WC.Center_right_box[0], WC.bottomLights), 610), Colors.RED, render)
+        App.LightS.add(Vec2((WC.Center_right_box[0], WC.bottomLights), 610), Colors.RED, render)
 
         self.Timer = Timer()
 
@@ -142,12 +141,14 @@ class Game:
             App.AudioS.update()
             App.Screen.screen.title = f"FPS:{int(App.Clock.get_fps())} AVG:{int(App.FPSCounter.avg)}, dt:{App.dt}"
 
+            Command.update_schedule()
+
             self.events()
             if not App.Runtime.IsPause:
                 # Debug, light to mouse
-                # if App.Runtime.IsDebugging:
-                # App.LightS.Lights[0].pos = Mouse.pos()
-                # self.BallS.Balls[0].hitbox.center = Mouse.pos().xy
+                if App.Runtime.IsDebugging:
+                    # App.LightS.Lights[0].pos = Mouse.pos()
+                    self.BallS.Balls[0].hitbox.center = Mouse.pos().xy
 
                 self.player.update()
                 # self.GunRight.update()

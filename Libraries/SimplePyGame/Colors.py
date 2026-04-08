@@ -10,6 +10,8 @@ class Colors:
     GREEN = Color(0, 255, 0)
     BLUE = Color(0, 0, 255)
 
+    PINK = Color(255, 0, 160)
+
     YELLOW = Color(255, 255, 0)
 
     WHITE_Alpha_0 = Color.mono_color_with_alpha(255, 0)

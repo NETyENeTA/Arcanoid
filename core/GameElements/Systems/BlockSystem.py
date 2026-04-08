@@ -80,7 +80,7 @@ class BlockSystem:
 
     def update(self):
 
-        for block in self.DestroyedBlocks:
+        for block in self.DestroyedBlocks[:]:
 
             if block.is_gone:
                 self.DestroyedBlocks.remove(block)
@@ -90,10 +90,10 @@ class BlockSystem:
 
     def draw(self):
 
-        for block in self.Blocks:
+        for block in self.Blocks[:]:
             block.draw()
 
-        for block in self.DestroyedBlocks:
+        for block in self.DestroyedBlocks[:]:
             block.draw()
 
 

@@ -173,7 +173,7 @@ class Paddle(Block):
         else:
             super().draw()
 
-        for i in range(min(self.health, 3)):
+        for i in range(min(self.health, self.Default.Health)):
             pos = (
                 self.hitbox.right - Paddle.Heart.W - i * (Paddle.Heart.W + Paddle.Heart.Between),
                 self.hitbox.bottom + Paddle.Heart.OffsetY

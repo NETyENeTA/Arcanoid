@@ -94,7 +94,7 @@ class BallSystem:
 
     def update(self):
 
-        for ball in self.Balls:
+        for ball in self.Balls[:]:
 
             ball.update()
 

@@ -1,4 +1,4 @@
-from Libraries.Python.Command import Command
+from Event.CommandStuff.Command import Command
 from Libraries.SimplePyGame.Positions import Vec2
 from Libraries.SimplePyGame.SDL2.UI.ButtonColors import ButtonColors
 from Libraries.SimplePyGame.SDL2.UI.Rectangle import Rectangle

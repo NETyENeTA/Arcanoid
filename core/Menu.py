@@ -1,13 +1,11 @@
-from Libraries.Python.Command import Command
+from Event.CommandStuff.Command import Command
 from Libraries.SimplePyGame.Color import Color
 from Libraries.SimplePyGame.Colors import Colors
 from Libraries.SimplePyGame.Positions import Vec2
 from Libraries.SimplePyGame.SDL2.Text.Text import Text
-from Libraries.SimplePyGame.SDL2.UI.Button import Button
 from Libraries.SimplePyGame.SDL2.UI.ButtonColors import ButtonColors
 from Libraries.SimplePyGame.SDL2.UI.TextButton import TextButton
 from Libraries.SimplePyGame.SDL2.UI.TextButtonColors import TextButtonColors
-from core.App import AppConfigs as App, AppConfigs
 
 import pygame as pg
 

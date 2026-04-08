@@ -1,4 +1,4 @@
-from Libraries.Python.Command import Command
+from Event.CommandStuff.Command import Command
 from Libraries.SimplePyGame.Colors import Colors
 from core.GameElements.Paddle import Paddle
 from core.GameElements.Systems.Items.Gun import Gun
@@ -19,7 +19,8 @@ class GunSystem:
 
         self.disable_gun = Command(self._disable_gun, delay=5)
 
-    def _disable_gun(self, gun: Gun):
+    @staticmethod
+    def _disable_gun(gun: Gun):
         gun.disable()
 
     def activate_gun(self):
@@ -27,8 +28,7 @@ class GunSystem:
         for gun in self.Guns:
             if gun.is_disabled:
                 gun.enable = True
-                self.disable_gun.args = [gun]
-                self.disable_gun.invoke()
+                self.disable_gun.create(gun).invoke()
                 break
 
     def update(self):

@@ -1,6 +1,5 @@
-from Libraries.Python.Command import Command
+from Event.CommandStuff.Command import Command
 from Libraries.SimplePyGame.Color import Color
-from Libraries.SimplePyGame.Colors import Colors
 from Libraries.SimplePyGame.SDL2.UI.Rectangle import Rectangle, pg
 from pygame._sdl2.video import Texture
 from math import sin

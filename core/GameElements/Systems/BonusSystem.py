@@ -2,7 +2,7 @@ from collections.abc import Callable
 
 from pygame._sdl2.video import Renderer
 
-from Libraries.Python.Command import Command
+from Event.CommandStuff.Command import Command
 from Libraries.Python.Mixin import InspectorMixin
 from Libraries.SimplePyGame.Positions import Vec2
 from core.App import AppConfigs as App, WindowConfig as WC
@@ -20,6 +20,7 @@ class BonusSystem:
         ADD_BALL = 2
         ADD_STICKY_BALL = 3
         GUN_PISTOLS = 4
+        GIVE_LIFE = 5
 
     def __init__(self, paddle: Paddle, add_ball: Callable, add_sticky_ball: Callable, activate_gun: Callable,
                  render: Renderer = None):
@@ -35,8 +36,14 @@ class BonusSystem:
         self.Command_Add_Ball = Command(add_ball, radius=14)
         self.Command_Sticky_Ball = Command(add_sticky_ball, radius=14)
         self.Command_Activate_Pistols = Command(activate_gun)
-
+        self.Command_Give_Life = Command(self.__add_health_paddle)
         self.is_stickyBall_here = False
+
+    def __add_health_paddle(self):
+        if self.paddle.hp >= self.paddle.Default.Health:
+            self.paddle.score += 30
+            return
+        self.paddle.hp += 1
 
     def clear_status(self):
         self.is_stickyBall_here = False
@@ -54,36 +61,42 @@ class BonusSystem:
 
     def spawn(self, pos: Vec2, rate: float | int = 0.2):
 
-        if random() < rate or True:
+        if random() < rate:
             type_bonus = choice(BonusSystem.Types.get_all_values())
-            if not self.is_stickyBall_here:
+
+            # 1. Нельзя второй Sticky, если он уже есть
+            is_sticky_limit = self.is_stickyBall_here and type_bonus == BonusSystem.Types.ADD_STICKY_BALL
+            # 2. Нельзя бонус Жизни, если HP полное
+            is_hp_full = type_bonus == BonusSystem.Types.GIVE_LIFE and self.paddle.hp >= self.paddle.Default.Health
+
+            if not is_sticky_limit and not is_hp_full:
                 self.add(pos, type_bonus)
 
     def add(self, pos: Vec2, _type: Types | int):
 
         bonus: Bonus
 
-        _type = BonusSystem.Types.GUN_PISTOLS
+        # _type = BonusSystem.Types.GIVE_LIFE
 
         match _type:
             case BonusSystem.Types.WIDE_PADDLE:
-                bonus = Bonuses.wide_paddle(pos, _type, self.Command_Wide_Paddle)
+                bonus = Bonuses.bonus(pos, _type, self.Command_Wide_Paddle)
 
             case BonusSystem.Types.SPEED_BALL:
-                bonus = Bonuses.speed_ball(pos, _type, self.Command_Speed_Ball)
+                bonus = Bonuses.bonus(pos, _type, self.Command_Speed_Ball)
 
             case BonusSystem.Types.ADD_BALL:
-                # self.Command_Add_Ball.kwargs['pos'] = pos
-                bonus = Bonuses.add_ball(pos, _type, self.Command_Add_Ball)
+                bonus = Bonuses.bonus(pos, _type, self.Command_Add_Ball)
 
             case BonusSystem.Types.ADD_STICKY_BALL:
-                # self.Command_Add_Ball.kwargs['pos'] = pos
                 self.is_stickyBall_here = True
-                bonus = Bonuses.add_sticky_ball(pos, _type, self.Command_Sticky_Ball)
+                bonus = Bonuses.bonus(pos, _type, self.Command_Sticky_Ball)
 
             case BonusSystem.Types.GUN_PISTOLS:
+                bonus = Bonuses.bonus(pos, _type, self.Command_Activate_Pistols)
 
-                bonus = Bonuses.activate_pistols(pos, _type, self.Command_Activate_Pistols)
+            case BonusSystem.Types.GIVE_LIFE:
+                bonus = Bonuses.bonus(pos, _type, self.Command_Give_Life)
 
             case _:
                 raise TypeError("Bonus type not supported")
