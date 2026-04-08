@@ -1,5 +1,5 @@
 from pygame.math import Vector2
-from Libraries.Animations.Functions.Lerp import lerp
+from Libraries.Animations.Functions.Lerp import lerp, lerp_tuple
 
 class PositionObject(object):
     def __init__(self, pos: "Vec2.NameSpaces.Value"):
@@ -28,6 +28,21 @@ class Vec2:
 
         self.x = x
         self.y = y
+
+    def ilerp(self, other: "Vec2", t: tuple | int | float):
+
+        # if isinstance(t, (int, float)):
+        #     self.xy = lerp_tuple(self.xy, other.xy, (t, t))
+        #     return self
+
+        t = t.xy if isinstance(t, Vec2) else t
+
+        if isinstance(other, Vec2):
+            self.xy = lerp_tuple(self.xy, other.xy, t)
+        elif isinstance(other, (tuple, list)):
+            self.xy = lerp_tuple(self.xy, other, t)
+
+        return self
 
     def lerp(self, other: "Vec2", t: float) -> "Vec2":
         return Vec2(

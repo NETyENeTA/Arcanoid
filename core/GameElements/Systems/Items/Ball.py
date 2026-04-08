@@ -59,9 +59,11 @@ class Ball(ShadowCaster):
 
     def update(self):
 
-        if self.is_sticky and App.keys()[pg.K_SPACE]:
-            self.is_sticky = False
-            # self.direction.x = rfl([0, 1])
+        if self.is_sticky:
+            if App.keys()[pg.K_SPACE]:
+                self.is_sticky = False
+                # self.direction.x = rfl([0, 1])
+            return
 
         if self.pos.x < WindowApp.Left:
             self.direction.reflect_x(False)
@@ -81,8 +83,7 @@ class Ball(ShadowCaster):
             self.direction.normalize()
             App.sfx.pos_play("ball hit", self.pos.x)
 
-        if not self.is_sticky:
-            self.pos += self.direction * self.speed * self.movement * App.dt
+        self.pos += self.direction * self.speed * self.movement * App.dt
 
     @property
     def center(self) -> Vec2:

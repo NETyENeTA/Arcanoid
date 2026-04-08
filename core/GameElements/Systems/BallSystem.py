@@ -102,7 +102,7 @@ class BallSystem:
                 ball.hitbox.center = (self.paddle.hitbox.centerx, self.paddle.hitbox.top - ball.radius - 5)
                 continue
 
-            if self.is_passed_level and ball.hitbox.bottom > WindowApp.bottom:
+            if self.is_passed_level and len(self.Balls) == 1 and ball.hitbox.bottom > WindowApp.bottom:
                 ball.direction.reflect_y(True)
                 App.sfx.pos_play("ball hit", ball.pos.x)
                 continue

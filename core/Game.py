@@ -1,4 +1,6 @@
 # Python Lib
+from Event.Event import Event
+from Libraries.Python.Command import Command
 from Libraries.Python.List import get_at
 
 # SPG Lib
@@ -14,6 +16,8 @@ from Libraries.SimplePyGame.SDL2.Text.Text import Text
 # Configs & Settings
 import GameFiles.Settings.Player as PS
 import GameFiles.Configs.WindowApp as WC
+from core.GameElements.Systems.GunSystem import GunSystem
+from core.GameElements.Systems.Items.Gun import Gun
 
 # core.GameElements
 # todo: check if need to delete prefix: "core."
@@ -81,7 +85,8 @@ class Game:
         test_block[0].health = 3
 
         self.HUD: HUD = HUD()
-        self.BonusS = BonusSystem(self.player, self.add_ball, self.add_sticky_ball)
+        self.GunS = GunSystem(self.player)
+        self.BonusS = BonusSystem(self.player, self.add_ball, self.add_sticky_ball, self.GunS.activate_gun)
         self.BlockS = BlockSystem(self.BonusS, test_blocks)
         self.BallS = BallSystem(self.player, self.BlockS, self.end_game, self.pass_level)
 
@@ -101,7 +106,6 @@ class Game:
         self.Texts[3].rect.center = (Vec2(0, 30) + WC.Center).xy
 
     def add_sticky_ball(self, radius=14):
-        print("123")
         self.BallS.add(Vec2.Zero, radius)
 
     def add_ball(self, radius=14):
@@ -136,7 +140,7 @@ class Game:
             App.tick()
             App.FPSCounter.tick()
             App.AudioS.update()
-            # App.Screen.screen.title = f"FPS:{int(App.Clock.get_fps())} AVG:{int(App.FPSCounter.avg)}, dt:{App.dt}"
+            App.Screen.screen.title = f"FPS:{int(App.Clock.get_fps())} AVG:{int(App.FPSCounter.avg)}, dt:{App.dt}"
 
             self.events()
             if not App.Runtime.IsPause:
@@ -146,6 +150,9 @@ class Game:
                 # self.BallS.Balls[0].hitbox.center = Mouse.pos().xy
 
                 self.player.update()
+                # self.GunRight.update()
+                # self.GunLeft.update()
+                self.GunS.update()
                 self.BlockS.update()
                 self.BonusS.update()
                 self.BallS.update()
@@ -194,6 +201,12 @@ class Game:
         for event in App.events():
             if event.type == pg.QUIT:
                 App.stop()  # exiting
+
+            elif event.type == Event.Types.EXECUTE_COMMAND:
+                command = event.dict.get(Command.Default.MY_NAME)
+                if command:
+                    command()
+
             elif event.type == pg.KEYDOWN:
 
                 # pg.mouse.set_visible(True)
@@ -250,6 +263,9 @@ class Game:
         self.player.cast_shadow()
 
         self.player.draw()
+        self.GunS.draw()
+        # self.GunRight.draw()
+        # self.GunLeft.draw()
 
         self.BallS.draw()
         self.BlockS.draw()

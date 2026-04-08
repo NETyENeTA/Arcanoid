@@ -16,6 +16,7 @@ class Bonuses:
             SPEED_BALL = BonusColors(Colors.YELLOW, Colors.WHITE, Colors.BLACK)
             ADDED_BALL = BonusColors(Colors.BLUE, Colors.WHITE, Colors.BLACK)
             ADDED_STICKY_BALL = BonusColors(Colors.CYAN, Colors.WHITE, Colors.BLACK)
+            GUN_PISTOLS = BonusColors(Colors.RED, Colors.WHITE, Colors.BLACK)
 
     @staticmethod
     def wide_paddle(pos: Vec2, _type: int, command: Command = None) -> Bonus:
@@ -35,6 +36,11 @@ class Bonuses:
     @staticmethod
     def add_sticky_ball(pos: Vec2, _type: int, command: Command = None) -> Bonus:
         return Bonus(size=Bonuses.Default.SIZE, color=Bonuses.Default.Color.ADDED_STICKY_BALL, pos=pos, command=command,
+                     _type=_type)
+
+    @staticmethod
+    def activate_pistols(pos: Vec2, _type: int, command: Command = None) -> Bonus:
+        return Bonus(size=Bonuses.Default.SIZE, color=Bonuses.Default.Color.GUN_PISTOLS, pos=pos, command=command,
                      _type=_type)
 
 

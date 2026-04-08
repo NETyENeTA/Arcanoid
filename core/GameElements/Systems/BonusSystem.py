@@ -19,8 +19,9 @@ class BonusSystem:
         SPEED_BALL = 1
         ADD_BALL = 2
         ADD_STICKY_BALL = 3
+        GUN_PISTOLS = 4
 
-    def __init__(self, paddle: Paddle, add_ball: Callable, add_sticky_ball: Callable,
+    def __init__(self, paddle: Paddle, add_ball: Callable, add_sticky_ball: Callable, activate_gun: Callable,
                  render: Renderer = None):
 
         self.render = render if render else App.Screen.render
@@ -33,6 +34,7 @@ class BonusSystem:
         self.Command_Speed_Ball = Command(None)
         self.Command_Add_Ball = Command(add_ball, radius=14)
         self.Command_Sticky_Ball = Command(add_sticky_ball, radius=14)
+        self.Command_Activate_Pistols = Command(activate_gun)
 
         self.is_stickyBall_here = False
 
@@ -52,7 +54,7 @@ class BonusSystem:
 
     def spawn(self, pos: Vec2, rate: float | int = 0.2):
 
-        if random() < rate:
+        if random() < rate or True:
             type_bonus = choice(BonusSystem.Types.get_all_values())
             if not self.is_stickyBall_here:
                 self.add(pos, type_bonus)
@@ -61,7 +63,7 @@ class BonusSystem:
 
         bonus: Bonus
 
-        # _type = BonusSystem.Types.ADD_STICKY_BALL
+        _type = BonusSystem.Types.GUN_PISTOLS
 
         match _type:
             case BonusSystem.Types.WIDE_PADDLE:
@@ -78,6 +80,10 @@ class BonusSystem:
                 # self.Command_Add_Ball.kwargs['pos'] = pos
                 self.is_stickyBall_here = True
                 bonus = Bonuses.add_sticky_ball(pos, _type, self.Command_Sticky_Ball)
+
+            case BonusSystem.Types.GUN_PISTOLS:
+
+                bonus = Bonuses.activate_pistols(pos, _type, self.Command_Activate_Pistols)
 
             case _:
                 raise TypeError("Bonus type not supported")

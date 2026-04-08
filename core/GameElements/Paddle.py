@@ -114,7 +114,6 @@ class Paddle(Block):
             self.hitbox.right = WindowConfigs.with_player_collision[1]
 
     def death(self):
-        # print(self.movement.y * self.speed.y * App.dt, self.speed.y)
         self.hitbox.y += self.movement.y * self.speed.y * App.dt
         self.speed.y += self.Gravity * App.dt
 
