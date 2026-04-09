@@ -49,9 +49,9 @@ class Game:
 
         self.status = Game.Status.Playing
 
-        App.LightS.add(Vec2(WC.Center_left_box[0], WC.bottomLights), Colors.BLUE, render)
+        # App.LightS.add(Vec2(WC.Center_left_box[0], WC.bottomLights), Colors.BLUE, render)
         App.LightS.add(Vec2(WC.Center[0], WC.bottomLights), Colors.GRAY, render)
-        App.LightS.add(Vec2((WC.Center_right_box[0], WC.bottomLights), 610), Colors.RED, render)
+        # App.LightS.add(Vec2((WC.Center_right_box[0], WC.bottomLights), 610), Colors.RED, render)
 
         self.Timer = Timer()
 
@@ -70,6 +70,14 @@ class Game:
             for i in range(13) for j in range(5)
         ]
 
+        level2 = [
+            Block(Vec2(i * 110 - 30, j * 50 + 90), Vec2(100, 35), None, None,
+                  Color.mono_color_alpha(150), Color.mono_color_alpha(100),
+                  Color.mono_color_alpha(0), Color.mono_color_alpha(150))
+            for i in range(14)
+            for j in range(i if i <= 8 else 8)
+        ]
+
         test_block = [
             Block(Vec2(90, 90), Vec2(1400, 300), None, None,
                   Color.mono_color_alpha(150), Color.mono_color_alpha(100),
@@ -84,9 +92,9 @@ class Game:
         test_block[0].health = 3
 
         self.HUD: HUD = HUD()
-        self.GunS = GunSystem(self.player)
-        self.BonusS = BonusSystem(self.player, self.add_ball, self.add_sticky_ball, self.GunS.activate_gun)
-        self.BlockS = BlockSystem(self.BonusS, test_blocks)
+        self.BonusS = BonusSystem(self.player, self.add_ball, self.add_sticky_ball, self.activate_any_gun)
+        self.BlockS = BlockSystem(self.BonusS, level2)
+        self.GunS = GunSystem(self.player, self.BlockS, self.pass_level)
         self.BallS = BallSystem(self.player, self.BlockS, self.end_game, self.pass_level)
 
         self.Texts = [
@@ -104,6 +112,9 @@ class Game:
         self.Texts[2].rect.center = (Vec2(0, 70) + WC.Center).xy
         self.Texts[3].rect.center = (Vec2(0, 30) + WC.Center).xy
 
+    def activate_any_gun(self):
+        self.GunS.activate_gun()
+
     def add_sticky_ball(self, radius=14):
         self.BallS.add(Vec2.Zero, radius)
 
@@ -112,6 +123,8 @@ class Game:
         self.BallS.add(pos, radius, False)
 
     def pass_level(self):
+
+        self.BallS.is_passed_level = True
 
         self.Timer.toggle_pause()
 
@@ -168,7 +181,7 @@ class Game:
             self.BallS.Balls[0].direction.xy = (0, 1)
 
         if App.cheat == App.cheats[1]:
-            self.player.score += 10
+            self.player.add_score(50)
 
         if App.cheat == App.cheats[2]:
             App.Runtime.IsDebug = not App.Runtime.IsDebug

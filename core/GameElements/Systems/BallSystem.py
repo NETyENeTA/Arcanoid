@@ -126,8 +126,8 @@ class BallSystem:
                     self.end_game()
                     self.is_end_game = True
 
-
-            if ball.direction.y > 0 and ball.hitbox.colliderect(self.paddle.hitbox):
+            if (ball.direction.y > 0 and ball.hitbox.colliderect(self.paddle.hitbox)
+                    and self.paddle.is_alive and not self.is_passed_level):
                 # ball.direction = self.collide(ball.direction, ball.hitbox, ball.paddle)
                 ball.direction.reflect_y(True)
                 ball.direction.x = self.get_paddle_direction(ball.center.x, self.paddle.hitbox.centerx)
@@ -151,14 +151,13 @@ class BallSystem:
                 if block.is_dead:
                     App.sfx.pos_play("ball hit a default block", ball.pos.x)
                     self.BlockSystem.kill(collision_id)
-                    self.paddle.score += 10
+                    self.paddle.add_score(10)
 
                     if len(self.BlockSystem.blocks) == 0:
                         self.pass_level()
-                        self.is_passed_level = True
 
                 else:
-                    self.paddle.score += 5
+                    self.paddle.add_score(5)
                     App.sfx.pos_play("ball hit", ball.pos.x)
                     self.BlockSystem.BonusSystem.spawn(block.center, 0.1)
 

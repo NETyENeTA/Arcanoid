@@ -18,7 +18,7 @@ class Text:
 
         pos = pos.xy if isinstance(pos, Vec2) else pos
 
-        self.texture: Texture | None = None
+        self.texture: Texture
         self.rect: Rect = Rect(pos, (0, 0))
         self.render: Renderer = render
 
@@ -57,7 +57,6 @@ class Text:
 
         elif isinstance(value, tuple):
             self.rect.topleft = value
-
 
     @property
     def color(self):

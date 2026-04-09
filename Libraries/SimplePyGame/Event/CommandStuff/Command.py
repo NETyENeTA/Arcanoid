@@ -8,21 +8,24 @@ from Event.Event import Event
 
 
 class Command:
-    _tasks = []
+    _tasks: list[Task] = []
 
     class Default:
         LOOPS = 1
         MY_NAME = "command_object"
 
     def __init__(self, action: Callable | None, *args, action_name: str | None = None, delay: int | float = None,
+                 ability_canceled_delete: bool = False, funcs_args: list = None,
                  **kwargs):
 
         self.action: Callable | None = action
         self.args = args
+        self.func_args = funcs_args or []
         self.kwargs = kwargs
 
         self.delay = delay
         self.__canceled = False
+        self.CancelDelete = ability_canceled_delete
 
         self.__name: str = str(action_name or getattr(action, '__name__', action))
 
@@ -30,17 +33,21 @@ class Command:
     def name(self):
         return self.__name
 
-    def create(self, *args, action: Callable = None, delay: int | float = None, **kwargs) -> 'Command':
+    def create(self, *args, action: Callable = None, delay: int | float = None,
+               ability_canceled_delete: bool = False, funcs_args: list = None,
+               **kwargs) -> 'Command':
         """Создает копию команды с новыми аргументами"""
         # Если args/kwargs не переданы, берем их из текущей команды
         _args = args if args else self.args
         _kwargs = kwargs if kwargs else self.kwargs
         _delay = delay if delay is not None else self.delay
         _action = action if action is not None else self.action
+        _cancelDelete = ability_canceled_delete if ability_canceled_delete else self.CancelDelete
+        _funcs_args = funcs_args if funcs_args else self.func_args
 
         # Возвращаем абсолютно новый объект
         return Command(_action, *_args, action_name=self.name,
-                       delay=_delay, **_kwargs)
+                       delay=_delay, ability_canceled_delete=_cancelDelete, funcs_args=_funcs_args, **_kwargs)
 
     def invoke(self, manager: CommandManager | None = None,
                timeout: int | float = None, loops: int = Default.LOOPS, locked: bool = False):
@@ -100,9 +107,13 @@ class Command:
         now = pg.time.get_ticks()
         for task in cls._tasks[:]:
             task.update(now)
-            if task.is_finished:
+            if (task.is_finished or
+                    task.Command.is_canceled and task.Command.CancelDelete):
                 cls._tasks.remove(task)
 
+    @property
+    def is_canceled(self) -> bool:
+        return self.__canceled
 
     def cancel(self):
         self.__canceled = True
@@ -114,7 +125,9 @@ class Command:
         if self.action is None or self.__canceled:
             return None
 
-        _args = [*self.args, *args]
+        results = [func() for func in self.func_args]
+
+        _args = [*self.args, *results, *args]
         _kwargs = {**kwargs, **self.kwargs}
 
         return self.action(*_args, **_kwargs)

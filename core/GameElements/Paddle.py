@@ -2,6 +2,7 @@ from Libraries.Animations.Functions.Lerp import lerp
 from Libraries.SimplePyGame.Colors import Colors
 from Libraries.SimplePyGame.Positions import Vec2
 from Libraries.SimplePyGame.UI.Mouse import Mouse
+from Text.Text import Text
 
 from core.GameElements.Systems.Items.Block import Block, pg
 from core.App import AppConfigs as App
@@ -46,7 +47,7 @@ class Paddle(Block):
         self.DoubleHeight = self.hitbox.h * 2
         self.H2draw = WindowConfigs.H + self.DoubleHeight
 
-        self.score = 0
+        self.__score = 0
         self.Timer = timer
 
         self.PauseBoards = [
@@ -60,6 +61,9 @@ class Paddle(Block):
         self.isBlack = True
         self.Damaged = False
         self.SecondsDamaged = 0
+
+        self.started = False
+        self.StartText = Text(self.render, (0, 0), "[SPACE]", ("prstart", 12), Colors.WHITE)
 
         self.smoothness = 15.0
 
@@ -157,7 +161,19 @@ class Paddle(Block):
 
     @property
     def info(self):
-        return f"{self.Timer.get_format("%h%.%m%.%s%")} {' ' * (3 - len(str(self.score)))}score:{self.score}"
+        # return f"{self.time} {' ' * (3 - len(str(self.__score)))}score:{self.__score}"
+        return f"{self.time}  {self.score}"
+
+    @property
+    def time(self):
+        return self.Timer.get_format("%h%.%m%.%s%")
+
+    @property
+    def score(self):
+        return f"score:{self.__score}"
+
+    def add_score(self, value):
+        self.__score += value
 
     def draw(self):
 
@@ -181,15 +197,29 @@ class Paddle(Block):
             self.render.draw_color = Colors.BLACK.rgb
             self.render.fill_rect(pg.Rect(pos, Paddle.Heart.WH))
 
-        App.FontS.draw_text(
-            text= self.info,
-            name="prstart",
-            size=12,
-            color=Colors.BLACK.rgb,
-            pos=(self.hitbox.left + 10, self.hitbox.top - 18)
-        )
+        if self.started:
+            App.FontS.draw_text(
+                text=self.time,
+                name="prstart",
+                size=12,
+                color=Colors.BLACK.rgb,
+                pos=(self.hitbox.left + 10, self.hitbox.top - 18)
+            )
 
-        if App.Runtime.IsPause:
+            App.FontS.draw_text(
+                text=self.score,
+                name="prstart",
+                size=12,
+                color=Colors.BLACK.rgb,
+                pos=(self.hitbox.right - len(self.score) * 12, self.hitbox.top - 18)
+            )
+
+        if not self.started:
+            self.StartText.rect.center = self.hitbox.center
+            self.StartText.draw()
+
+
+        elif App.Runtime.IsPause:
 
             if self.PauseTick < 0:
                 self.PauseTick = Paddle.Default.PauseTick

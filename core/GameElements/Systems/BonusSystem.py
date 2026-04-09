@@ -76,7 +76,7 @@ class BonusSystem:
 
         bonus: Bonus
 
-        # _type = BonusSystem.Types.GIVE_LIFE
+        # _type = BonusSystem.Types.GUN_PISTOLS
 
         match _type:
             case BonusSystem.Types.WIDE_PADDLE:
