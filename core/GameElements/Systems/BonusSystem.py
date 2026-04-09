@@ -41,7 +41,7 @@ class BonusSystem:
 
     def __add_health_paddle(self):
         if self.paddle.hp >= self.paddle.Default.Health:
-            self.paddle.score += 30
+            self.paddle.add_score(30)
             return
         self.paddle.hp += 1
 

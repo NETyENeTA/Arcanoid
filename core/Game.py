@@ -53,7 +53,7 @@ class Game:
         App.LightS.add(Vec2(WC.Center[0], WC.bottomLights), Colors.GRAY, render)
         # App.LightS.add(Vec2((WC.Center_right_box[0], WC.bottomLights), 610), Colors.RED, render)
 
-        self.Timer = Timer()
+        self.Timer = Timer(pause=True)
 
         self.player: Paddle = Paddle(
             (App.Resolution.W // 2, App.Resolution.H - PS.Offset_collision[1]),
@@ -93,7 +93,7 @@ class Game:
 
         self.HUD: HUD = HUD()
         self.BonusS = BonusSystem(self.player, self.add_ball, self.add_sticky_ball, self.activate_any_gun)
-        self.BlockS = BlockSystem(self.BonusS, level2)
+        self.BlockS = BlockSystem(self.BonusS, test_block)
         self.GunS = GunSystem(self.player, self.BlockS, self.pass_level)
         self.BallS = BallSystem(self.player, self.BlockS, self.end_game, self.pass_level)
 
@@ -126,7 +126,7 @@ class Game:
 
         self.BallS.is_passed_level = True
 
-        self.Timer.toggle_pause()
+        self.Timer.switch_pause(True)
 
         self.status = Game.Status.PassedLevel
         self.Texts[2].value = self.player.info
@@ -138,7 +138,7 @@ class Game:
 
     def end_game(self):
 
-        self.Timer.toggle_pause()
+        self.Timer.switch_pause(True)
 
         self.status = Game.Status.GameOver
         self.Texts[2].value = self.player.info
@@ -148,6 +148,7 @@ class Game:
             self.Texts[i].is_visible = not self.Texts[i].is_visible
 
     def update(self):
+        Mouse.set_cursor_visibility(False)
         while App.Runtime.IsOn:
             App.tick()
             App.FPSCounter.tick()
@@ -171,6 +172,8 @@ class Game:
                 self.HUD.update()
 
             self.display()
+
+        Mouse.set_cursor_visibility(True)
 
     def chack_cheat(self):
 
@@ -239,6 +242,8 @@ class Game:
 
                 elif event.key == pg.K_SPACE:
                     self.player.started = True
+                    if not App.Runtime.IsPause:
+                        self.Timer.switch_pause(False)
                     if not self.BonusS.is_check_bonus_in(BonusSystem.Types.ADD_STICKY_BALL):
                         self.BonusS.is_stickyBall_here = False
 

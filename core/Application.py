@@ -56,7 +56,6 @@ class Application:
         self.sfx()
         self.fonts()
 
-        # Mouse.set_cursor_visibility(False)
         self.Logo = Logo(sc, render)
         self.Menu = Menu(sc, render)
 

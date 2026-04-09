@@ -1,3 +1,5 @@
+from Libraries.Animations.Functions.Lerp import lerp, lerp_tuple
+from Libraries.Math.Trigonometry import Sinus
 from typing import Callable
 
 from GameFiles.Configs import WindowApp
@@ -99,7 +101,13 @@ class BallSystem:
             ball.update()
 
             if ball.is_sticky:
-                ball.hitbox.center = (self.paddle.hitbox.centerx, self.paddle.hitbox.top - ball.radius - 5)
+                value = Sinus.smooth_01(App.ticks() / 400)
+
+                ball.hitbox.centerx = lerp(ball.hitbox.centerx, self.paddle.hitbox.centerx, 0.2)
+                ball.hitbox.bottom = lerp(ball.hitbox.bottom,
+                                          self.paddle.hitbox.top - 5 - (15 * value), 0.5)
+
+
                 continue
 
             if self.is_passed_level and len(self.Balls) == 1 and ball.hitbox.bottom > WindowApp.bottom:
