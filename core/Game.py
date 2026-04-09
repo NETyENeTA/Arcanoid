@@ -8,6 +8,7 @@ from Libraries.SimplePyGame.Colors import Colors
 from Libraries.SimplePyGame.Color import Color
 
 from Libraries.SimplePyGame.DateTime.Timer import Timer
+from Libraries.SimplePyGame.DateTime.Stopwatch import Stopwatch
 from Libraries.SimplePyGame.Positions import Vec2
 from Libraries.SimplePyGame.UI.Mouse import Mouse
 
@@ -53,12 +54,12 @@ class Game:
         App.LightS.add(Vec2(WC.Center[0], WC.bottomLights), Colors.GRAY, render)
         # App.LightS.add(Vec2((WC.Center_right_box[0], WC.bottomLights), 610), Colors.RED, render)
 
-        self.Timer = Timer(pause=True)
+        self.Stopwatch = Stopwatch(pause=True)
 
         self.player: Paddle = Paddle(
             (App.Resolution.W // 2, App.Resolution.H - PS.Offset_collision[1]),
             (240, 30),
-            Colors.BLACK, self.Timer)
+            Colors.BLACK, self.Stopwatch)
 
         self.player.shadow_info.minimal = 15
 
@@ -126,7 +127,7 @@ class Game:
 
         self.BallS.is_passed_level = True
 
-        self.Timer.switch_pause(True)
+        self.Stopwatch.switch_pause(True)
 
         self.status = Game.Status.PassedLevel
         self.Texts[2].value = self.player.info
@@ -138,7 +139,7 @@ class Game:
 
     def end_game(self):
 
-        self.Timer.switch_pause(True)
+        self.Stopwatch.switch_pause(True)
 
         self.status = Game.Status.GameOver
         self.Texts[2].value = self.player.info
@@ -235,7 +236,7 @@ class Game:
                 if event.key == pg.K_ESCAPE:
                     App.toggle_pause()
                     if self.status not in (Game.Status.GameOver, Game.Status.PassedLevel):
-                        self.Timer.toggle_pause()
+                        self.Stopwatch.toggle_pause()
 
                 elif event.key == pg.K_BACKSPACE:
                     App.cheat = App.cheat[:-1]
@@ -243,7 +244,7 @@ class Game:
                 elif event.key == pg.K_SPACE:
                     self.player.started = True
                     if not App.Runtime.IsPause:
-                        self.Timer.switch_pause(False)
+                        self.Stopwatch.switch_pause(False)
                     if not self.BonusS.is_check_bonus_in(BonusSystem.Types.ADD_STICKY_BALL):
                         self.BonusS.is_stickyBall_here = False
 

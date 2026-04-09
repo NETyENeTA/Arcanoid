@@ -26,7 +26,7 @@ class Paddle(Block):
 
     total_width = Heart.W * Default.Health + Heart.Between * (Default.Health - 1)
 
-    def __init__(self, pos, size, color, timer):
+    def __init__(self, pos, size, color, stopwatch):
         super().__init__((0, 0), size, color)
 
         self.speed = Vec2(PlayerSettings.SpeedX, 1)
@@ -48,7 +48,7 @@ class Paddle(Block):
         self.H2draw = WindowConfigs.H + self.DoubleHeight
 
         self.__score = 0
-        self.Timer = timer
+        self.Stopwatch = stopwatch
 
         self.PauseBoards = [
             App.FontS.get_with_bg_texture("paused", "prstart", 12,
@@ -164,7 +164,7 @@ class Paddle(Block):
 
     @property
     def time(self):
-        return self.Timer.get_format("%h%.%m%.%s%")
+        return self.Stopwatch.get_format("%h%.%m%.%s%")
 
     @property
     def score(self):
