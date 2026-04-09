@@ -164,8 +164,6 @@ class Game:
                     self.BallS.Balls[0].hitbox.center = Mouse.pos().xy
 
                 self.player.update()
-                # self.GunRight.update()
-                # self.GunLeft.update()
                 self.GunS.update()
                 self.BlockS.update()
                 self.BonusS.update()
@@ -239,18 +237,16 @@ class Game:
                 elif event.key == pg.K_BACKSPACE:
                     App.cheat = App.cheat[:-1]
 
-                elif event.key == pg.K_TAB:
-                    App.AudioS.play_next()
-
                 elif event.key == pg.K_SPACE:
+                    self.player.started = True
                     if not self.BonusS.is_check_bonus_in(BonusSystem.Types.ADD_STICKY_BALL):
                         self.BonusS.is_stickyBall_here = False
 
-                elif event.key == pg.K_LSHIFT:
-                    self.auto_complete()
-
                 elif event.key == pg.K_TAB:
-                    App.AudioS.play_next()
+                    if App.cheat:
+                        self.auto_complete()
+                    else:
+                        App.AudioS.play_next()
 
                 elif event.key == pg.K_RETURN:
                     self.chack_cheat()
@@ -278,8 +274,6 @@ class Game:
 
         self.player.draw()
         self.GunS.draw()
-        # self.GunRight.draw()
-        # self.GunLeft.draw()
 
         self.BallS.draw()
         self.BlockS.draw()

@@ -77,7 +77,6 @@ class Paddle(Block):
         self.hitbox.w += value
         self.hitbox.x -= value / 2
 
-
     def damaged(self, seconds):
         self.Damaged = True
         self.SecondsDamaged = seconds
@@ -145,7 +144,6 @@ class Paddle(Block):
             if self.SecondsDamaged < 0:
                 self.Damaged = False
 
-
         if App.CurrentController == App.ControlMode.Keyboard:
             self.controls()
         elif App.CurrentController == App.ControlMode.Mouse:
@@ -174,6 +172,9 @@ class Paddle(Block):
 
     def add_score(self, value):
         self.__score += value
+
+    def bounce(self, y: int | float):
+        self.target_y += y
 
     def draw(self):
 
@@ -214,23 +215,19 @@ class Paddle(Block):
                 pos=(self.hitbox.right - len(self.score) * 12, self.hitbox.top - 18)
             )
 
-        if not self.started:
+            if App.Runtime.IsPause:
+
+                if self.PauseTick < 0:
+                    self.PauseTick = Paddle.Default.PauseTick
+                    self.isBlack = not self.isBlack
+
+                self.PauseTick -= App.dt
+
+                board = self.PauseBoards[self.isBlack]
+                rect = board.get_rect()
+
+                board.draw(dstrect=(self.hitbox.left, self.hitbox.top - rect.h - 2, rect.w, rect.h))
+
+        else:
             self.StartText.rect.center = self.hitbox.center
             self.StartText.draw()
-
-
-        elif App.Runtime.IsPause:
-
-            if self.PauseTick < 0:
-                self.PauseTick = Paddle.Default.PauseTick
-                self.isBlack = not self.isBlack
-
-            self.PauseTick -= App.dt
-
-            board = self.PauseBoards[self.isBlack]
-            rect = board.get_rect()
-
-            board.draw(dstrect=(self.hitbox.left, self.hitbox.top - rect.h - 2, rect.w, rect.h))
-
-    def bounce(self, y: int | float):
-        self.target_y += y
