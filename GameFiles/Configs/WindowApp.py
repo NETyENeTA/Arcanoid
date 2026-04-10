@@ -46,6 +46,9 @@ Audio_total_width = Audio_right - Audio_left
 Audio_Left = (Audio_left, Audio_Y)
 Audio_Right = (Audio_right, Audio_Y)
 
+# Game Paused Surface
+Surface = (Center[0], H - 120)
+
 # vsync = True
 vsync = False
 

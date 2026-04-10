@@ -13,6 +13,9 @@ from core.App import AppConfigs as App
 
 
 class BallSystem:
+    class Default:
+        MAX_SPEED = Vec2(10, 10)
+
 
     @staticmethod
     def collide(direction: Vec2, ball_rect: pg.Rect, target_rect: pg.Rect) -> Vec2:
@@ -77,6 +80,11 @@ class BallSystem:
 
         self.is_end_game = False
         self.is_passed_level = False
+
+    def rise_speed(self):
+        for ball in self.Balls:
+            if ball.speed.y < BallSystem.Default.MAX_SPEED.y:
+                ball.speed.y *= 1.1
 
     def add_ball(self, ball):
         self.Balls.append(ball)

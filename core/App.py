@@ -80,6 +80,7 @@ class AppConfigs:
         Keyboard = 0
         Mouse = 1
 
+    realSpacePressed = False
 
     LightS: LightSystem = None
     CurrentController: int = ControlMode.Keyboard

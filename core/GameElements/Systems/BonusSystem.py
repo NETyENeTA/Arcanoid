@@ -22,7 +22,8 @@ class BonusSystem:
         GUN_PISTOLS = 4
         GIVE_LIFE = 5
 
-    def __init__(self, paddle: Paddle, add_ball: Callable, add_sticky_ball: Callable, activate_gun: Callable,
+    def __init__(self, paddle: Paddle, add_ball: Callable, add_sticky_ball: Callable, rise_speed_ball: Callable,
+                 activate_gun: Callable,
                  render: Renderer = None):
 
         self.render = render if render else App.Screen.render
@@ -32,7 +33,7 @@ class BonusSystem:
         self.paddle = paddle
 
         self.Command_Wide_Paddle = Command(self.paddle.expand, 10)
-        self.Command_Speed_Ball = Command(None)
+        self.Command_Speed_Ball = Command(rise_speed_ball)
         self.Command_Add_Ball = Command(add_ball, radius=14)
         self.Command_Sticky_Ball = Command(add_sticky_ball, radius=14)
         self.Command_Activate_Pistols = Command(activate_gun)
@@ -52,7 +53,6 @@ class BonusSystem:
         self.Bonuses.append(bonus)
 
     def is_check_bonus_in(self, _type) -> bool:
-
         for bonus in self.Bonuses:
             if bonus.type == _type:
                 return True
@@ -76,7 +76,7 @@ class BonusSystem:
 
         bonus: Bonus
 
-        # _type = BonusSystem.Types.GUN_PISTOLS
+        # _type = BonusSystem.Types.SPEED_BALL
 
         match _type:
             case BonusSystem.Types.WIDE_PADDLE:

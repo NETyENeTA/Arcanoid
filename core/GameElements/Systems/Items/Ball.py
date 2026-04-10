@@ -23,7 +23,7 @@ class Ball(ShadowCaster):
 
 
         self.hitbox = pg.Rect(0, 0, self.diameter, self.diameter)
-        self.hitbox.center = pos.xy
+        self.hitbox.center = pos.xy if isinstance(pos, Vec2) else pos
 
         self.render: Renderer = App.Screen.render
         self.color = color
@@ -59,10 +59,9 @@ class Ball(ShadowCaster):
 
     def update(self):
 
-        if self.is_sticky:
-            if App.keys()[pg.K_SPACE]:
-                self.is_sticky = False
-                # self.direction.x = rfl([0, 1])
+        if self.is_sticky and App.realSpacePressed:
+            self.is_sticky = False
+            App.realSpacePressed = False
             return
 
         if self.pos.x < WindowApp.Left:

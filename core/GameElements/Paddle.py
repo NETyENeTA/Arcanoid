@@ -124,6 +124,13 @@ class Paddle(Block):
             self.speed.y *= -1
             self.bounces -= 1
 
+    def update_bounce(self):
+
+        if self.is_dead:
+            return
+
+        self.hitbox.centery = lerp(self.hitbox.centery, self.target_y, self.smoothness * App.dt)
+
     def update(self):
 
         # off update

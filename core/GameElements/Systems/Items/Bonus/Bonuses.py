@@ -23,31 +23,6 @@ class Bonuses:
         return Bonus(size=Bonuses.Default.SIZE, color=Bonuses.Default.Color.get_all_values()[_type], pos=pos,
                      command=command, _type=_type)
 
-    @staticmethod
-    def wide_paddle(pos: Vec2, _type: int, command: Command = None) -> Bonus:
-        return Bonus(size=Bonuses.Default.SIZE, color=Bonuses.Default.Color.WIDE_PADDLE, pos=pos, command=command,
-                     _type=_type)
-
-    @staticmethod
-    def speed_ball(pos: Vec2, _type: int, command: Command = None) -> Bonus:
-        return Bonus(size=Bonuses.Default.SIZE, color=Bonuses.Default.Color.SPEED_BALL, pos=pos, command=command,
-                     _type=_type)
-
-    @staticmethod
-    def add_ball(pos: Vec2, _type: int, command: Command = None) -> Bonus:
-        return Bonus(size=Bonuses.Default.SIZE, color=Bonuses.Default.Color.ADDED_BALL, pos=pos, command=command,
-                     _type=_type)
-
-    @staticmethod
-    def add_sticky_ball(pos: Vec2, _type: int, command: Command = None) -> Bonus:
-        return Bonus(size=Bonuses.Default.SIZE, color=Bonuses.Default.Color.ADDED_STICKY_BALL, pos=pos, command=command,
-                     _type=_type)
-
-    @staticmethod
-    def activate_pistols(pos: Vec2, _type: int, command: Command = None) -> Bonus:
-        return Bonus(size=Bonuses.Default.SIZE, color=Bonuses.Default.Color.GUN_PISTOLS, pos=pos, command=command,
-                     _type=_type)
-
 
 def main():
     pass

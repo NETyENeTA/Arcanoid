@@ -17,6 +17,8 @@ from Libraries.SimplePyGame.SDL2.Text.Text import Text
 # Configs & Settings
 import GameFiles.Settings.Player as PS
 import GameFiles.Configs.WindowApp as WC
+from UI.Surface import Surface
+from core.GameElements.PauseMenu import PauseMenu
 from core.GameElements.Systems.GunSystem import GunSystem
 
 # core.GameElements
@@ -93,8 +95,9 @@ class Game:
         test_block[0].health = 3
 
         self.HUD: HUD = HUD()
-        self.BonusS = BonusSystem(self.player, self.add_ball, self.add_sticky_ball, self.activate_any_gun)
-        self.BlockS = BlockSystem(self.BonusS, test_block)
+        self.BonusS = BonusSystem(self.player, self.add_ball, self.add_sticky_ball, self.rise_speed_ball,
+                                  self.activate_any_gun)
+        self.BlockS = BlockSystem(self.BonusS, test_blocks)
         self.GunS = GunSystem(self.player, self.BlockS, self.pass_level)
         self.BallS = BallSystem(self.player, self.BlockS, self.end_game, self.pass_level)
 
@@ -113,11 +116,20 @@ class Game:
         self.Texts[2].rect.center = (Vec2(0, 70) + WC.Center).xy
         self.Texts[3].rect.center = (Vec2(0, 30) + WC.Center).xy
 
+        self.PauseMenu = PauseMenu(self.player)
+
     def activate_any_gun(self):
         self.GunS.activate_gun()
 
+    def rise_speed_ball(self):
+        self.BallS.rise_speed()
+
+
     def add_sticky_ball(self, radius=14):
-        self.BallS.add(Vec2.Zero, radius)
+        self.BallS.add((
+            self.player.hitbox.centerx,
+            self.player.hitbox.top - radius
+        ), radius)
 
     def add_ball(self, radius=14):
         pos = self.BallS.Balls[-1].pos
@@ -159,7 +171,10 @@ class Game:
             Command.update_schedule()
 
             self.events()
-            if not App.Runtime.IsPause:
+            self.PauseMenu.update()
+            if App.Runtime.IsPause:
+                self.player.update_bounce()
+            else:
                 # Debug, light to mouse
                 if App.Runtime.IsDebugging:
                     # App.LightS.Lights[0].pos = Mouse.pos()
@@ -235,6 +250,7 @@ class Game:
 
                 if event.key == pg.K_ESCAPE:
                     App.toggle_pause()
+                    self.PauseMenu.toggle_active()
                     if self.status not in (Game.Status.GameOver, Game.Status.PassedLevel):
                         self.Stopwatch.toggle_pause()
 
@@ -243,6 +259,7 @@ class Game:
 
                 elif event.key == pg.K_SPACE:
                     self.player.started = True
+                    App.realSpacePressed = True
                     if not App.Runtime.IsPause:
                         self.Stopwatch.switch_pause(False)
                     if not self.BonusS.is_check_bonus_in(BonusSystem.Types.ADD_STICKY_BALL):
@@ -285,6 +302,7 @@ class Game:
         self.BlockS.draw()
         self.BonusS.draw()
 
+        self.PauseMenu.draw()
         App.Cursor.draw_center()
 
         self.HUD.draw()
