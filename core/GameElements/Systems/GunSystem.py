@@ -1,6 +1,6 @@
 from collections.abc import Callable
 
-from Bullet import Bullet
+from Items.Bullet import Bullet
 from Event.CommandStuff.Command import Command
 from Libraries.SimplePyGame.Colors import Colors
 from Positions import Vec2
