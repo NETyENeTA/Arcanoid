@@ -3,6 +3,7 @@ from os import path, listdir, getcwd
 from random import shuffle
 
 from mutagen.mp3 import MP3
+from mutagen.easyid3 import EasyID3
 
 class PlayList:
 
@@ -31,7 +32,7 @@ class PlayList:
 
         current_track: str = self.queue.pop()
 
-        audio = MP3(current_track)
+        audio = MP3(current_track, ID3=EasyID3)
         # duration = audio.info.length
 
         return current_track, audio

@@ -17,7 +17,8 @@ from Libraries.SimplePyGame.SDL2.Text.Text import Text
 # Configs & Settings
 import GameFiles.Settings.Player as PS
 import GameFiles.Configs.WindowApp as WC
-from UI.Surface import Surface
+
+from core.GameElements.MusicKit import MusicKit
 from core.GameElements.PauseMenu import PauseMenu
 from core.GameElements.Systems.GunSystem import GunSystem
 
@@ -121,6 +122,7 @@ class Game:
         self.Texts[3].rect.center = (Vec2(0, 30) + WC.Center).xy
 
         self.PauseMenu = PauseMenu(self.player, self.restart)
+        self.MusicKit = MusicKit(self.player, self.PauseMenu)
 
     def activate_any_gun(self):
         self.GunS.activate_gun()
@@ -177,6 +179,7 @@ class Game:
 
             self.events()
             self.PauseMenu.update()
+            self.MusicKit.update()
             if App.Runtime.IsPause:
                 self.player.update_bounce()
                 self.BallS.update_sticky()
@@ -322,6 +325,7 @@ class Game:
         self.BonusS.draw()
 
         self.PauseMenu.draw()
+        self.MusicKit.draw()
         App.Cursor.draw_center()
 
         self.HUD.draw()

@@ -123,7 +123,6 @@ class PauseMenu:
                 btn.command()
                 break
 
-
     @property
     def pos(self):
         return self.surface.rect.topleft

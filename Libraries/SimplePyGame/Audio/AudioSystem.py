@@ -1,3 +1,6 @@
+
+
+from Event.CommandStuff.Command import Command
 from Libraries.SimplePyGame.Audio.PlayList import PlayList
 from Libraries.SimplePyGame.Audio.Track import Track, mixer
 
@@ -8,6 +11,25 @@ class AudioSystem:
         mixer.init()
         self.Player = PlayList("../GameFiles/Media/audio/music")
         self.CurrentTrack: Track | None = None
+        self.events: list[Command] = []
+
+    def sign_event(self, event):
+        self.events.append(event)
+
+    @property
+    def progress(self) -> float:
+        if self.CurrentTrack:
+            return self.CurrentTrack.progress
+
+        return 0.00
+
+    @property
+    def percentage(self) -> float:
+        if self.CurrentTrack:
+            return self.CurrentTrack.progress * 100
+
+        return 0.00
+
 
     @property
     def volume(self):
@@ -23,6 +45,12 @@ class AudioSystem:
         self.CurrentTrack = Track(track_path, audio_data)
         self.CurrentTrack.load()
         self.CurrentTrack.play()
+
+        self.invoke_events()
+
+    def invoke_events(self):
+        for event in self.events:
+            event.invoke()
 
     def update(self):
         if not self.is_busy:

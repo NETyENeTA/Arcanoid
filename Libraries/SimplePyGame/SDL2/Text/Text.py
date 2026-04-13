@@ -1,10 +1,8 @@
 from pygame._sdl2 import Texture, Renderer
 from pygame import Rect
 
-import Positions
 from Libraries.SimplePyGame.Color import Color, NameSpaces as ColorNameSpaces
 from Libraries.SimplePyGame.Positions import Vec2
-from Libraries.SimplePyGame.SDL2.Text.DynamicText import DynamicText
 from Libraries.SimplePyGame.SDL2.Text.FontInfo import FontInfo
 
 from core.App import AppConfigs as App

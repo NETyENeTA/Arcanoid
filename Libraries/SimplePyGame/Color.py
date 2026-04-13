@@ -26,6 +26,32 @@ class Color:
 
         self.r, self.g, self.b, self.a = red, green, blue, alpha
 
+    def __iadd__(self, other):
+        if isinstance(other, Color):
+            self.r += other.r
+            self.g += other.g
+            self.b += other.b
+            self.a += other.a
+
+        if isinstance(other, (tuple, list)):
+            self.r += other[0]
+            self.g += other[1]
+            self.b += other[2]
+            if len(other) > 3:
+                self.a += other[3]
+
+        return self
+
+    def __add__(self, other):
+
+        if isinstance(other, Color):
+            return Color(self.r + other.r, self.g + other.g, self.b + other.b, self.a + other.a)
+
+        if isinstance(other, (tuple, list)):
+            return Color(self.r + other[0], self.g + other[1], self.b + other[2], self.a + other[3])
+
+        raise TypeError
+
     def __eq__(self, other):
 
         if not isinstance(other, (Color, tuple, list, dict)):
