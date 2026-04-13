@@ -3,7 +3,7 @@
 # import Game as GameCore
 
 import pygame as pg
-from pygame._sdl2 import Window, Renderer
+from pygame._sdl2 import Window, Renderer, get_drivers
 
 from Libraries.SimplePyGame.Audio.AudioSystem import AudioSystem
 from Libraries.SimplePyGame.Audio.SFXSystem import SFXSystem
@@ -38,9 +38,11 @@ class Application:
 
         # flags = pg.RESIZABLE | pg.SCALED
         # sc = pg.display.set_mode(AppConfigs.Resolution.WH, flags=flags)
-        sc = Window("Arcanoid2", size=AppConfigs.Resolution.WH)
+        sc = Window("Arcanoid2", size=AppConfigs.Resolution.WH, resizable=True)
         render = Renderer(sc, vsync=WC.vsync)
+        self.info()
 
+        render.logical_size = AppConfigs.Resolution.WH
         AppConfigs.Screen = ScreenLib.Screen(sc=sc, render=render)
         self.sc = sc
         self.render = render
@@ -58,6 +60,15 @@ class Application:
 
         self.Logo = Logo(sc, render)
         self.Menu = Menu(sc, render)
+
+    def info(self):
+
+        print(f"Видео-драйвер: {pg.display.get_driver()}")
+        print(f"Инфо о системе: {pg.display.get_wm_info()}")
+        # drivers = list(get_drivers())
+        # print(f"Доступные драйверы SDL2: {drivers}")
+        for i, driver in enumerate(get_drivers()):
+            print(f"Driver {i}: {driver}")
 
     def sfx(self):
         AppConfigs.sfx = SFXSystem(AppConfigs.Resolution.W)

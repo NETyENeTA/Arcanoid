@@ -10,12 +10,15 @@ from core.App import AppConfigs as App
 
 
 import GameFiles.Configs.WindowApp as WindowApp
-from Libraries.Math.Random import randrange_int as rnd
+from Libraries.Math.Random import choice
 from core.GameElements.ShadowCaster import ShadowCaster
+from math import degrees, atan2, cos, sin
 
 
 class Ball(ShadowCaster):
 
+    SURFACE: pg.Surface = None
+    TEXTURE: Texture = None
 
     def __init__(self, pos: Vec2, radius: int, color: Color = Colors.BLACK, is_sticky: bool = False):
         self.radius = radius
@@ -28,7 +31,7 @@ class Ball(ShadowCaster):
         self.render: Renderer = App.Screen.render
         self.color = color
 
-        self._direction = Vec2(rnd(-1, 1), -1)
+        self._direction = Vec2.Zero if is_sticky else Vec2(choice(-1, 1), -1)
 
         self.speed = Vec2(4, 4)
         self.movement = Vec2(100, 100)
@@ -40,9 +43,15 @@ class Ball(ShadowCaster):
         self.init_shadow()
 
         # Create Ball
-        temp_surf = pg.Surface((self.diameter, self.diameter), pg.SRCALPHA)
-        pg.draw.circle(temp_surf, self.color.full, (self.radius, self.radius), self.radius)
-        self.texture = Texture.from_surface(self.render, temp_surf)
+        if Ball.SURFACE is None:
+            temp_surf = pg.Surface((self.diameter, self.diameter), pg.SRCALPHA)
+            pg.draw.circle(temp_surf, self.color.full, (self.radius, self.radius), self.radius)
+            Ball.SURFACE = temp_surf
+
+        if Ball.TEXTURE is None:
+            # temp_surf = pg.Surface((self.diameter, self.diameter), pg.SRCALPHA)
+            # pg.draw.circle(temp_surf, self.color.full, (self.radius, self.radius), self.radius)
+            Ball.TEXTURE = Texture.from_surface(self.render, Ball.SURFACE)
 
     def draw_shadow_shape(self, surf, color):
         # Рисуем круг в центре поверхности
@@ -62,6 +71,7 @@ class Ball(ShadowCaster):
         if self.is_sticky and App.realSpacePressed:
             self.is_sticky = False
             App.realSpacePressed = False
+            self._direction = Vec2(choice(-1, 1), -1)
             return
 
         if self.pos.x < WindowApp.Left:
@@ -82,7 +92,7 @@ class Ball(ShadowCaster):
             self.direction.normalize()
             App.sfx.pos_play("ball hit", self.pos.x)
 
-        self.pos += self.direction * self.speed * self.movement * App.dt
+        self.pos += self.calculated_speed * App.dt
 
     @property
     def center(self) -> Vec2:
@@ -97,8 +107,52 @@ class Ball(ShadowCaster):
         self._direction = direction
         self._direction.normalize()
 
+    @property
+    def calculated_speed(self) -> Vec2:
+        return self._direction * self.speed * self.movement
+
     def draw(self):
-        self.render.blit(self.texture, self.hitbox)
+
+        # 1. Рассчитываем динамический размер (Squash & Stretch)
+        stretch_factor = 0.1
+        speed_mag = (abs(self.speed.x * self.direction.x) + abs(self.speed.y * self.direction.y)) / 2
+
+        # Целевые размеры
+        width = int(self.diameter + (speed_mag * stretch_factor * 4))
+        height = int(self.diameter - (speed_mag * stretch_factor * 4))
+
+        # Ограничение, чтобы не схлопнулся
+        width = max(10, width)
+        height = max(5, height)
+
+        # 2. Создаем временный Surface для манипуляций
+        # Берем оригинальную текстуру (если она есть) или создаем круг
+        # ВАЖНО: Мы работаем с Surface, а не с Texture напрямую
+        # temp_surf = pg.Surface((self.diameter, self.diameter), pg.SRCALPHA)
+        temp_surf = Ball.SURFACE
+
+        # Рисуем шарик на Surface (или используем self.source_surface, если ты ее сохранил)
+        # pg.draw.circle(temp_surf, self.color.rgb, (self.diameter // 2, self.diameter // 2), self.radius)
+
+        # 3. Масштабируем (Squash & Stretch)
+        temp_surf = pg.transform.scale(temp_surf, (width, height))
+
+        # 4. Поворачиваем по направлению движения
+        angle = -degrees(atan2(self.direction.y, self.direction.x))
+        rotated_surf = pg.transform.rotate(temp_surf, angle)
+
+        # 5. КОНВЕРТИРУЕМ В ТЕКСТУРУ (самая тяжелая часть, но необходимая для Renderer)
+        ball_texture = Texture.from_surface(self.render, rotated_surf)
+
+        # 6. Отрисовываем
+        render_rect = rotated_surf.get_rect()
+        render_rect.center = self.hitbox.center
+        # render_rect.size = (width, height)
+
+        self.render.blit(ball_texture, render_rect)
+
+    def old_draw(self):
+        self.render.blit(Ball.TEXTURE, self.hitbox)
 
     def debug_draw(self):
         self.render.draw_rect(self.hitbox)

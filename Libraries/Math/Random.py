@@ -10,3 +10,6 @@ def randrange_int(minimal: int, maximal: int) -> int:
 
 def random_from_list(*values: List[T] | Tuple[T]) -> T:
     return random.choice(values)
+
+def choice(*sequences: list[T] | tuple[T] | T) -> T:
+    return random.choice(sequences)

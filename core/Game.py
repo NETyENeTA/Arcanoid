@@ -45,6 +45,10 @@ class Game:
         Death = 0
         GameOver = -1
 
+    def restart(self):
+        App.Runtime.IsPause = False
+        self.__init__(self.sc, self.render)
+
     def __init__(self, screen, render):
         print("Initializing Game")
         self.sc = screen
@@ -116,7 +120,7 @@ class Game:
         self.Texts[2].rect.center = (Vec2(0, 70) + WC.Center).xy
         self.Texts[3].rect.center = (Vec2(0, 30) + WC.Center).xy
 
-        self.PauseMenu = PauseMenu(self.player)
+        self.PauseMenu = PauseMenu(self.player, self.restart)
 
     def activate_any_gun(self):
         self.GunS.activate_gun()
@@ -151,6 +155,7 @@ class Game:
 
     def end_game(self):
 
+        self.PauseMenu.switch_active(True)
         self.Stopwatch.switch_pause(True)
 
         self.status = Game.Status.GameOver
@@ -174,6 +179,7 @@ class Game:
             self.PauseMenu.update()
             if App.Runtime.IsPause:
                 self.player.update_bounce()
+                self.BallS.update_sticky()
             else:
                 # Debug, light to mouse
                 if App.Runtime.IsDebugging:
@@ -191,7 +197,7 @@ class Game:
 
         Mouse.set_cursor_visibility(True)
 
-    def chack_cheat(self):
+    def check_cheat(self):
 
         if App.cheat == App.cheats[0]:
             self.BallS.add(Vec2(400, 800), 14)
@@ -249,10 +255,20 @@ class Game:
                         App.cheat = ""
 
                 if event.key == pg.K_ESCAPE:
-                    App.toggle_pause()
-                    self.PauseMenu.toggle_active()
+                    # if self.player.is_alive:
+                    #     App.toggle_pause()
+                    # self.PauseMenu.toggle_active()
+                    self.PauseMenu.toggle_pause(self.player.is_alive)
                     if self.status not in (Game.Status.GameOver, Game.Status.PassedLevel):
                         self.Stopwatch.toggle_pause()
+
+                elif event.key == pg.K_RIGHT:
+                    if self.PauseMenu.active:
+                        self.PauseMenu.select += 1
+
+                elif event.key == pg.K_LEFT:
+                    if self.PauseMenu.active:
+                        self.PauseMenu.select -= 1
 
                 elif event.key == pg.K_BACKSPACE:
                     App.cheat = App.cheat[:-1]
@@ -272,7 +288,10 @@ class Game:
                         App.AudioS.play_next()
 
                 elif event.key == pg.K_RETURN:
-                    self.chack_cheat()
+                    if App.cheat:
+                        self.check_cheat()
+                    elif self.PauseMenu.active:
+                        self.PauseMenu.check_buttons()
 
             elif event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 3:

@@ -56,10 +56,12 @@ FPS = 165
 # FPS = 90
 # FPS = 60
 # FPS = 10
-# FPS = 1
 # FPS = 10000
 
 FPS += 10
+
+# FPS = 0
+# FPS = 10
 
 if vsync:
     FPS = 0

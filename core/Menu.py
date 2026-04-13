@@ -35,6 +35,7 @@ class Menu:
 
         self.On = True
         self.Game: Game | None = None
+        App.Runtime.NewGame = self.new_game
 
         App.AudioS.volume = 0
 

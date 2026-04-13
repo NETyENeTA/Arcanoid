@@ -102,6 +102,21 @@ class BallSystem:
 
         return max(-0.8, min(raw_x, 0.8))
 
+
+    def update_sticky(self):
+
+        for ball in self.Balls[:]:
+
+            # ball.update()
+
+            if ball.is_sticky:
+                value = Sinus.smooth_01(App.ticks() / 400)
+
+                ball.hitbox.centerx = lerp(ball.hitbox.centerx, self.paddle.hitbox.centerx, 0.2)
+                ball.hitbox.bottom = lerp(ball.hitbox.bottom,
+                                          self.paddle.hitbox.top - 5 - (15 * value), 0.5)
+
+
     def update(self):
 
         for ball in self.Balls[:]:
@@ -197,6 +212,6 @@ class BallSystem:
 
         else:
             for ball in self.Balls:
-                ball.draw()
+                ball.old_draw()
 
 

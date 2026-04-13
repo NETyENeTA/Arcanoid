@@ -1,3 +1,5 @@
+from typing import Callable
+
 import Libraries.SimplePyGame.Screen as ScreenLib
 from Libraries.SimplePyGame.Audio.AudioSystem import AudioSystem
 from Libraries.SimplePyGame.Audio.SFXSystem import SFXSystem
@@ -75,6 +77,8 @@ class AppConfigs:
 
         IsDebugging: bool
         IsDebug: bool
+
+        NewGame: Callable
 
     class ControlMode:
         Keyboard = 0
