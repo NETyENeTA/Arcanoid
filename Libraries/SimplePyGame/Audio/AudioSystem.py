@@ -1,4 +1,4 @@
-
+from typing import Callable
 
 from Event.CommandStuff.Command import Command
 from Libraries.SimplePyGame.Audio.PlayList import PlayList
@@ -10,7 +10,7 @@ class AudioSystem:
     def __init__(self):
         mixer.init()
         self.Player = PlayList("../GameFiles/Media/audio/music")
-        self.CurrentTrack: Track | None = None
+        self.CurrentTrack: Track = Track()
         self.events: list[Command] = []
 
     def sign_event(self, event):
@@ -18,18 +18,17 @@ class AudioSystem:
 
     @property
     def progress(self) -> float:
-        if self.CurrentTrack:
+        if self.CurrentTrack.audio:
             return self.CurrentTrack.progress
 
         return 0.00
 
     @property
     def percentage(self) -> float:
-        if self.CurrentTrack:
+        if self.CurrentTrack.audio:
             return self.CurrentTrack.progress * 100
 
         return 0.00
-
 
     @property
     def volume(self):
@@ -39,12 +38,21 @@ class AudioSystem:
     def volume(self, value):
         mixer.music.set_volume(max(0.0, min(1.0, value)))
 
-
     def play_next(self):
-        track_path, audio_data = self.Player.next()
-        self.CurrentTrack = Track(track_path, audio_data)
-        self.CurrentTrack.load()
-        self.CurrentTrack.play()
+        self.play(self.Player.next)
+
+    def play_prev(self):
+        self.play(self.Player.prev)
+
+
+    def play(self, method: Callable):
+        if not self.Player.queue:
+            return
+
+        path = method()
+
+        self.CurrentTrack.update(path)
+        self.CurrentTrack.restart()
 
         self.invoke_events()
 

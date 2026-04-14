@@ -19,6 +19,7 @@ class MusicKit:
         FILLER_COLOR = Colors.GRAY + Color.mono_color(30)
         PADDLE_BOUNCE = 50
         FADEOUT = 0.015
+        OFFSET_X = 60
 
     class Targets:
         HIDDEN = (WC.MusicKit[0], WC.H)
@@ -34,6 +35,7 @@ class MusicKit:
         self.active = False
 
         self.fillRect = pg.Rect((0, 0), self.size)
+        self.old_x = self.pos[0]
 
         self.paddle = paddle
         self.PauseMenu = pause_menu
@@ -50,7 +52,8 @@ class MusicKit:
         print(App.AudioS.events)
 
     def generate_text(self):
-        self.TrackText.value = f"{App.AudioS.CurrentTrack.name} {App.AudioS.CurrentTrack.info('artist', 'Unknow')[0]}"
+        self.TrackText.value = (f"{App.AudioS.CurrentTrack.name} "
+                                f"{App.AudioS.CurrentTrack.info('artist', 'Unknow')[0]}")
         self.TrackText.rect.center = self.size[0] / 2, self.size[1] / 2
 
 
@@ -96,10 +99,13 @@ class MusicKit:
         with self.surface.capture():
 
             self.render.draw_color = MusicKit.Default.FILLER_COLOR.rgba
-            self.fillRect.w = self.size[0] * App.AudioS.progress / MusicKit.Default.FADEOUT
+            percentage = App.AudioS.progress / MusicKit.Default.FADEOUT
+            self.fillRect.w = self.size[0] * percentage
             self.render.fill_rect(self.fillRect)
 
             self.TrackText.draw()
+
+        self.surface.rect.x = self.old_x - MusicKit.Default.OFFSET_X * percentage
 
         self.surface.draw()
         self.surface.clear(MusicKit.Default.BG_COLOR.rgba)

@@ -65,7 +65,7 @@ class Paddle(Block):
         self.started = False
         self.StartText = Text(self.render, (0, 0), "[SPACE]", ("prstart", 12), Colors.WHITE)
 
-        self.smoothness = 0.05
+        self.smoothness = Vec2(0.05, 0.2)
 
     def expand(self, value: int | float) -> None:
         '''
@@ -85,7 +85,7 @@ class Paddle(Block):
         target_x = Mouse.pos().x
 
         # Плавно двигаем центр ракетки к мышке
-        self.hitbox.centerx = lerp(self.hitbox.centerx, target_x, self.smoothness)
+        self.hitbox.centerx = lerp(self.hitbox.centerx, target_x, self.smoothness.x)
 
         # Твои проверки границ WindowConfigs...
         if self.hitbox.left < WindowConfigs.with_player_collision[0]:
@@ -129,16 +129,18 @@ class Paddle(Block):
         if self.is_dead:
             return
 
-        self.hitbox.y = lerp(self.hitbox.y, self.target_y, self.smoothness)
+        self.hitbox.y = lerp(self.hitbox.y, self.target_y, self.smoothness.y)
 
     def update(self):
+
+        print(self.pos)
 
         # off update
         if self.is_overdrawn:
             return
 
         if self.is_alive:
-            self.hitbox.y = lerp(self.hitbox.y, self.target_y, self.smoothness)
+            self.hitbox.y = lerp(self.hitbox.y, self.target_y, self.smoothness.y)
 
         # if self.is_dead and self.is_drawn:
         #     self.death()

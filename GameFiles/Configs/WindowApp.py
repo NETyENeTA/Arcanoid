@@ -49,7 +49,7 @@ Audio_Right = (Audio_right, Audio_Y)
 # Game Paused Surface
 Surface = (Center[0], H - 120)
 
-MusicKit = (right - 200, H - 120)
+MusicKit = (right - 170, H - 120)
 
 # vsync = True
 vsync = False
