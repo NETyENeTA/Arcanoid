@@ -61,14 +61,12 @@ class GunSystem:
             collision_id = bullet.hitbox.collidelist(self.blockSystem.blocks)
             if collision_id != -1:
                 self.bullets.remove(bullet)
-                # self.blockSystem.kill(collision_id)
-                # App.sfx.pos_play("ball hit a default block", bullet.pos.x)
 
                 block = self.blockSystem.Blocks[collision_id]
                 block.hp -= 1
 
                 if block.is_dead:
-                    App.sfx.pos_play("ball hit a default block", bullet.pos.x)
+                    App.sfx.pos_play("explosion", bullet.pos.x)
                     self.blockSystem.kill(collision_id)
                     self.paddle.add_score(5)
 
@@ -77,7 +75,7 @@ class GunSystem:
 
                 else:
                     self.paddle.add_score(3)
-                    App.sfx.pos_play("ball hit", bullet.pos.x)
+                    # App.sfx.pos_play("ball hit", bullet.pos.x)
                     self.blockSystem.BonusSystem.spawn(block.center, 0.1)
 
 

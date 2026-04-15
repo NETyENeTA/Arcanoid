@@ -4,7 +4,7 @@ from Libraries.SimplePyGame.Positions import Vec2
 from Libraries.SimplePyGame.UI.Mouse import Mouse
 from Text.Text import Text
 
-from core.GameElements.Systems.Items.Block import Block, pg
+from Items.Block.Block import Block, pg
 from core.App import AppConfigs as App
 
 import GameFiles.Settings.Player as PlayerSettings

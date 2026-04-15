@@ -76,20 +76,20 @@ class Ball(ShadowCaster):
 
         if self.pos.x < WindowApp.Left:
             self.direction.reflect_x(False)
-            self.direction.normalize()
+            # self.direction.normalize()
             self.hitbox.left = WindowApp.Left
             # App.sfx.mode_play("ball hit", App.sfx.Modes.Left)
             App.sfx.pos_play("ball hit", self.pos.x)
 
         elif self.pos.x > WindowApp.right - self.diameter:
             self.direction.reflect_x(True)
-            self.direction.normalize()
+            # self.direction.normalize()
             # App.sfx.mode_play("ball hit", App.sfx.Modes.Right)
             App.sfx.pos_play("ball hit", self.pos.x)
 
         elif self.pos.y < WindowApp.Top:
             self.direction.reflect_y(False)
-            self.direction.normalize()
+            # self.direction.normalize()
             App.sfx.pos_play("ball hit", self.pos.x)
 
         self.pos += self.calculated_speed * App.dt

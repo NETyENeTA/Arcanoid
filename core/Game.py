@@ -8,7 +8,6 @@ from Libraries.SimplePyGame.Colors import Colors
 from Libraries.SimplePyGame.Color import Color
 
 from Libraries.SimplePyGame.DateTime.Timer import Timer
-from Libraries.SimplePyGame.DateTime.Stopwatch import Stopwatch
 from Libraries.SimplePyGame.Positions import Vec2
 from Libraries.SimplePyGame.UI.Mouse import Mouse
 
@@ -29,7 +28,7 @@ from core.GameElements.Paddle import Paddle
 
 from core.GameElements.Systems.BallSystem import BallSystem
 from core.GameElements.Systems.BonusSystem import BonusSystem
-from core.GameElements.Systems.Items.Block import Block
+from Items.Block.Block import Block
 from core.GameElements.Systems.BlockSystem import BlockSystem
 
 # Warn!!! "core." is required!!!
@@ -123,7 +122,7 @@ class Game:
         self.HUD: HUD = HUD()
         self.BonusS = BonusSystem(self.player, self.add_ball, self.add_sticky_ball, self.rise_speed_ball,
                                   self.activate_any_gun)
-        self.BlockS = BlockSystem(self.BonusS, test_block)
+        self.BlockS = BlockSystem(self.BonusS, test_blocks)
         self.GunS = GunSystem(self.player, self.BlockS, self.pass_level)
         self.BallS = BallSystem(self.player, self.BlockS, self.end_game, self.pass_level)
 

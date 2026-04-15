@@ -146,7 +146,6 @@ class BallSystem:
                 continue
 
             if ball.hitbox.bottom > WindowApp.bottom and len(self.Balls) == 1 and self.paddle.is_alive:
-                # ball.direction.y = -1
                 ball.direction.reflect_y(True)
                 HUD.visualisate_damage()
                 self.paddle.health -= 1
@@ -163,7 +162,6 @@ class BallSystem:
                 ball.direction.reflect_y(True)
                 ball.direction.x = self.get_paddle_direction(ball.center.x, self.paddle.hitbox.centerx)
                 ball.direction.normalize()
-                # self.paddle.bounce()
                 App.sfx.pos_play("ball hit", ball.pos.x)
 
             collision_id = ball.hitbox.collidelist(self.BlockSystem.blocks)
@@ -180,7 +178,7 @@ class BallSystem:
                 block.hp -= 1
 
                 if block.is_dead:
-                    App.sfx.pos_play("ball hit a default block", ball.pos.x)
+                    App.sfx.pos_play("explosion", ball.pos.x)
                     self.BlockSystem.kill(collision_id, 0.3)
                     self.paddle.add_score(10)
 

@@ -9,12 +9,13 @@ from core.GameElements.ShadowCaster import ShadowCaster
 
 
 from core.App import AppConfigs as App
-from core.GameElements.Systems.Items.Block import Block
+from Items.Block.Block import Block
 
 
 class DestroyingBlock(Rectangle, ShadowCaster):
 
-    def __init__(self, pos = None, size = None, color: Color | NameSpaces.color | None = None, render: Renderer | Screen = None,
+    def __init__(self, pos = None, size = None, color: Color | NameSpaces.color | None = None,
+                 render: Renderer | Screen = None,
                  block: Block | None = None):
 
         if block:

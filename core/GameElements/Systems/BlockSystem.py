@@ -1,10 +1,10 @@
 from pygame._sdl2.video import Renderer
 
 from core.GameElements.Systems.BonusSystem import BonusSystem
-from core.GameElements.Systems.Items.Block import Block, pg, App
+from Items.Block.Block import Block, pg, App
 from Libraries.SimplePyGame.Positions import Vec2
 from Libraries.SimplePyGame.Colors import Colors
-from core.GameElements.Systems.Items.DestroyingBlock import DestroyingBlock
+from Items.Block.DestroyingBlock import DestroyingBlock
 
 
 class BlockSystem:

@@ -73,7 +73,7 @@ class Application:
     def sfx(self):
         AppConfigs.sfx = SFXSystem(AppConfigs.Resolution.W)
         AppConfigs.sfx.load("ball hit", "../GameFiles/Media/audio/sounds/sfx/ball_hit.wav")
-        AppConfigs.sfx.load("ball hit a default block", "../GameFiles/Media/audio/sounds/sfx/explosion.wav")
+        AppConfigs.sfx.load("explosion", "../GameFiles/Media/audio/sounds/sfx/explosion.wav")
 
 
     def fonts(self):
