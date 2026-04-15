@@ -50,6 +50,27 @@ class Game:
         App.Runtime.IsPause = False
         self.__init__(self.sc, self.render)
 
+    def start_next_game(self):
+        for text in self.Texts:
+            text.is_visible = False
+
+        text = self.Texts[4]
+        text.value = "Get Ready!!!"
+        text.is_visible = True
+        Command(self.next_level, 3, text).invoke(timeout=3)
+
+
+    def next_level(self, counter, text: Text):
+
+        if counter < 0:
+            self.restart()
+            return
+
+        text.value = f"{counter}"
+        text.rect.center = WC.Center
+
+        Command(self.next_level, counter - 1, text).invoke(timeout=3)
+
     def __init__(self, screen, render):
         print("Initializing Game")
         self.sc = screen
@@ -102,7 +123,7 @@ class Game:
         self.HUD: HUD = HUD()
         self.BonusS = BonusSystem(self.player, self.add_ball, self.add_sticky_ball, self.rise_speed_ball,
                                   self.activate_any_gun)
-        self.BlockS = BlockSystem(self.BonusS, test_blocks)
+        self.BlockS = BlockSystem(self.BonusS, test_block)
         self.GunS = GunSystem(self.player, self.BlockS, self.pass_level)
         self.BallS = BallSystem(self.player, self.BlockS, self.end_game, self.pass_level)
 
@@ -114,12 +135,15 @@ class Game:
                  False),
             Text(self.render, Vec2(0, 0), "Level Passed", ("prstart", 48), Color.mono_color(0).rgb,
                  False),
+            Text(self.render, Vec2(0, 0), "Get Ready!", ("prstart", 48), Color.mono_color(0).rgb,
+                 False),
         ]
 
         self.Texts[0].rect.center = (Vec2(0, 60) + WC.Center).xy
         self.Texts[1].rect.center = (Vec2(0, 30) + WC.Center).xy
         self.Texts[2].rect.center = (Vec2(0, 70) + WC.Center).xy
         self.Texts[3].rect.center = (Vec2(0, 30) + WC.Center).xy
+        self.Texts[4].rect.center = WC.Center
 
         self.PauseMenu = PauseMenu(self.player, self.restart)
         self.MusicKit = MusicKit(self.player, self.PauseMenu)
@@ -154,6 +178,7 @@ class Game:
         self.Texts[0].is_visible = False
         self.Texts[2].is_visible = True
         self.Texts[3].is_visible = True
+        Command(self.start_next_game).invoke(timeout=4)
 
     def end_game(self):
 
