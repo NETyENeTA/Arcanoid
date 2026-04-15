@@ -82,7 +82,7 @@ class Game:
         App.LightS.add(Vec2(WC.Center[0], WC.bottomLights), Colors.GRAY, render)
         # App.LightS.add(Vec2((WC.Center_right_box[0], WC.bottomLights), 610), Colors.RED, render)
 
-        self.Stopwatch = Stopwatch(pause=True)
+        self.Stopwatch = Timer(60*3, pause=True)
 
         self.player: Paddle = Paddle(
             (App.Resolution.W // 2, App.Resolution.H - PS.Offset_collision[1]),
@@ -178,6 +178,9 @@ class Game:
         self.Texts[0].is_visible = False
         self.Texts[2].is_visible = True
         self.Texts[3].is_visible = True
+
+        self.PauseMenu.InteractiveBtns[0].disabled = True
+
         Command(self.start_next_game).invoke(timeout=4)
 
     def end_game(self):
@@ -286,7 +289,7 @@ class Game:
                     # if self.player.is_alive:
                     #     App.toggle_pause()
                     # self.PauseMenu.toggle_active()
-                    self.PauseMenu.toggle_pause(self.player.is_alive)
+                    self.PauseMenu.toggle_pause(self.player.is_alive and not self.BallS.is_passed_level)
                     if self.status not in (Game.Status.GameOver, Game.Status.PassedLevel):
                         self.Stopwatch.toggle_pause()
 

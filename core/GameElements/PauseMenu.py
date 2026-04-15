@@ -76,8 +76,8 @@ class PauseMenu:
             "upper": paddle.pos.y - PauseMenu.Default.PADDLE_BOUNCE,
         }
 
-    def toggle_pause(self, player_alive: bool = True):
-        if player_alive:
+    def toggle_pause(self, need_pause: bool = True):
+        if need_pause:
             App.toggle_pause()
         self.toggle_active()
 
@@ -108,18 +108,18 @@ class PauseMenu:
         # self.InteractiveBtns[self.select].text.color = Colors.WHITE
 
         btn = self.InteractiveBtns[self.select]
-        btn.text.color = Colors.BLACK
+        btn.text.color = Colors.BLACK_RED if btn.disabled else Colors.BLACK
         btn.selected = False
 
         self.currentChoice = value
 
         btn = self.InteractiveBtns[self.select]
-        btn.text.color = Colors.WHITE
+        btn.text.color = Colors.RED if btn.disabled else Colors.WHITE
         btn.selected = True
 
     def check_buttons(self):
         for btn in self.InteractiveBtns:
-            if btn.selected:
+            if btn.selected and not btn.disabled:
                 btn.command()
                 break
 

@@ -19,3 +19,5 @@ class Colors:
 
     GOLD = Color(255,125, 0)
     CYAN = Color(0, 255, 255)
+
+    BLACK_RED = Color(180, 0, 0)
