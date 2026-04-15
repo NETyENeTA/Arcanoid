@@ -133,7 +133,7 @@ class Paddle(Block):
 
     def update(self):
 
-        print(self.pos)
+        # print(self.pos)
 
         # off update
         if self.is_overdrawn:

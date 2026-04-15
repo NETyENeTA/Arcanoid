@@ -1,3 +1,4 @@
+from Colors import Colors
 from Event.CommandStuff.Command import Command
 from Libraries.SimplePyGame.Color import Color
 from Libraries.SimplePyGame.SDL2.UI.Rectangle import Rectangle, pg
@@ -8,16 +9,21 @@ from Libraries.SimplePyGame.Positions import Vec2, Range
 from core.GameElements.ShadowCaster import ShadowCaster
 from core.GameElements.Systems.Items.Bonus.BonusColors import BonusColors
 
+from Libraries.Math.Random import roll_boolean, roll_true_bool
+
 from core.App import AppConfigs as App
 
 
 class Bonus(Rectangle, ShadowCaster):
     _Texture_Cashe = {}
 
-    def __init__(self, _type: int, size, color: BonusColors, pos=Vec2.Zero, command: Command = None, render=None, ):
+    def __init__(self, _type: int, size, color: BonusColors, pos=Vec2.Zero, command: Command = None, render=None,
+                 fake_rate: float = None):
         super().__init__(pos, size, None, render)
         self.hitbox.center = pos.xy
         self.type = _type
+
+        self.fake = fake_rate
 
         self.Command = command
         self.color = color
@@ -31,6 +37,19 @@ class Bonus(Rectangle, ShadowCaster):
 
         self.shadow_info = Range(2, 0.1, 30)
         self.init_shadow()
+
+    @property
+    def fake(self):
+        return self._fake
+    @fake.setter
+    def fake(self, fakeable: bool | float):
+        if isinstance(fakeable, float):
+            self._fake: bool = roll_true_bool(fakeable)
+        elif isinstance(fakeable, bool | None):
+            self._fake: bool = roll_true_bool(0.3) if fakeable else False
+
+    def set_fake(self, value):
+        self._fake = value
 
     def draw_shadow_shape(self, surf, color):
         # Рисуем прямоугольник во весь размер поверхности

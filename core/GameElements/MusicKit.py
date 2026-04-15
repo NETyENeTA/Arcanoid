@@ -49,7 +49,6 @@ class MusicKit:
         }
 
         App.AudioS.sign_event(Command(self.generate_text))
-        print(App.AudioS.events)
 
     def generate_text(self):
         self.TrackText.value = (f"{App.AudioS.CurrentTrack.name} "

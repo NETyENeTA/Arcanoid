@@ -2,6 +2,7 @@ from collections.abc import Callable
 
 from pygame._sdl2.video import Renderer
 
+from Colors import Colors
 from Event.CommandStuff.Command import Command
 from Libraries.Python.Mixin import InspectorMixin
 from Libraries.SimplePyGame.Positions import Vec2
@@ -59,7 +60,7 @@ class BonusSystem:
 
         return False
 
-    def spawn(self, pos: Vec2, rate: float | int = 0.2):
+    def spawn(self, pos: Vec2, rate: float | int = 0.2, fakeable: bool = False):
 
         if random() < rate:
             type_bonus = choice(BonusSystem.Types.get_all_values())
@@ -70,9 +71,9 @@ class BonusSystem:
             is_hp_full = type_bonus == BonusSystem.Types.GIVE_LIFE and self.paddle.hp >= self.paddle.Default.Health
 
             if not is_sticky_limit and not is_hp_full:
-                self.add(pos, type_bonus)
+                self.add(pos, type_bonus, fakeable)
 
-    def add(self, pos: Vec2, _type: Types | int):
+    def add(self, pos: Vec2, _type: Types | int, fakeable: bool):
 
         bonus: Bonus
 
@@ -101,6 +102,7 @@ class BonusSystem:
             case _:
                 raise TypeError("Bonus type not supported")
 
+        bonus.fake = fakeable
         self.Bonuses.append(bonus)
 
     def is_collided_with_paddle(self, bonus: Bonus) -> bool:
@@ -117,7 +119,8 @@ class BonusSystem:
                 self.Bonuses.remove(bonus)
 
             if self.is_collided_with_paddle(bonus):
-                bonus.Command()
+                if not bonus.fake:
+                    bonus.Command()
                 self.Bonuses.remove(bonus)
 
     def cast_shadows(self):

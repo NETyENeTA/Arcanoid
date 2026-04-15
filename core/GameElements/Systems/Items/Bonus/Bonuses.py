@@ -18,10 +18,19 @@ class Bonuses:
             GUN_PISTOLS = BonusColors(Colors.RED, Colors.WHITE, Colors.BLACK)
             GIVE_LIFE = BonusColors(Colors.PINK, Colors.WHITE, Colors.BLACK)
 
+        class FakeRates(InspectorMixin):
+            WIDE_PADDLE = 0.4
+            SPEED_BALL = 0.6
+            ADDED_BALL = 0.7
+            ADDED_STICKY_BALL = 0.5
+            GUN_PISTOLS = 0.4
+            GIVE_LIFE = 0.8
+
+
     @staticmethod
     def bonus(pos: Vec2, _type: int, command: Command = None):
         return Bonus(size=Bonuses.Default.SIZE, color=Bonuses.Default.Color.get_all_values()[_type], pos=pos,
-                     command=command, _type=_type)
+                     command=command, _type=_type, fake_rate=Bonuses.Default.FakeRates.get_all_values()[_type])
 
 
 def main():

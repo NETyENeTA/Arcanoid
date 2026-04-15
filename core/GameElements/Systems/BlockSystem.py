@@ -50,10 +50,10 @@ class BlockSystem:
         self.Blocks.append(block)
         self._CashedBlocks.append(block.hitbox)
 
-    def kill(self, index):
+    def kill(self, index, rate: float = 0.2):
         block = self.pop(index)
         self.DestroyedBlocks.append(DestroyingBlock(block=block))
-        self.BonusSystem.spawn(block.center)
+        self.BonusSystem.spawn(block.center, rate)
 
     def remove_block(self, block: Block):
         self.Blocks.remove(block)
