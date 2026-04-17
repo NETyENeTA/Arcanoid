@@ -22,6 +22,8 @@ class BonusSystem:
         ADD_STICKY_BALL = 3
         GUN_PISTOLS = 4
         GIVE_LIFE = 5
+        STICKY_PADDLE = 6
+        MIRROR_PADDLE = 7
 
     def __init__(self, paddle: Paddle, add_ball: Callable, add_sticky_ball: Callable, rise_speed_ball: Callable,
                  activate_gun: Callable,
@@ -39,7 +41,15 @@ class BonusSystem:
         self.Command_Sticky_Ball = Command(add_sticky_ball, radius=14)
         self.Command_Activate_Pistols = Command(activate_gun)
         self.Command_Give_Life = Command(self.__add_health_paddle)
+        self.Command_Sticky_Paddle = Command(self.__sticky_paddle)
+        self.Command_Mirror_Paddle = Command(self.__mirror_paddle)
         self.is_stickyBall_here = False
+
+    def __mirror_paddle(self):
+        self.paddle.MirrorSecs = Paddle.Default.MirrorSecs
+
+    def __sticky_paddle(self):
+        self.paddle.StickySecs = Paddle.Default.StickySecs
 
     def __add_health_paddle(self):
         if self.paddle.hp >= self.paddle.Default.Health:
@@ -60,10 +70,11 @@ class BonusSystem:
 
         return False
 
-    def spawn(self, pos: Vec2, rate: float | int = 0.2, fakeable: bool = False):
+    def spawn(self, pos: Vec2, rate: float | int = 0.2):
 
         if random() < rate:
             type_bonus = choice(BonusSystem.Types.get_all_values())
+            # type_bonus = choice([6,7])
 
             # 1. Нельзя второй Sticky, если он уже есть
             is_sticky_limit = self.is_stickyBall_here and type_bonus == BonusSystem.Types.ADD_STICKY_BALL
@@ -71,13 +82,13 @@ class BonusSystem:
             is_hp_full = type_bonus == BonusSystem.Types.GIVE_LIFE and self.paddle.hp >= self.paddle.Default.Health
 
             if not is_sticky_limit and not is_hp_full:
-                self.add(pos, type_bonus, fakeable)
+                self.add(pos, type_bonus)
 
-    def add(self, pos: Vec2, _type: Types | int, fakeable: bool):
+    def add(self, pos: Vec2, _type: Types | int):
 
         bonus: Bonus
 
-        # _type = BonusSystem.Types.SPEED_BALL
+        # _type = BonusSystem.Types.MIRROR_PADDLE
 
         match _type:
             case BonusSystem.Types.WIDE_PADDLE:
@@ -99,10 +110,16 @@ class BonusSystem:
             case BonusSystem.Types.GIVE_LIFE:
                 bonus = Bonuses.bonus(pos, _type, self.Command_Give_Life)
 
+            case BonusSystem.Types.STICKY_PADDLE:
+                bonus = Bonuses.bonus(pos, _type, self.Command_Sticky_Paddle)
+
+            case BonusSystem.Types.MIRROR_PADDLE:
+                bonus = Bonuses.bonus(pos, _type, self.Command_Mirror_Paddle)
+
             case _:
                 raise TypeError("Bonus type not supported")
 
-        bonus.fake = fakeable
+        # bonus.fake = fakeable
         self.Bonuses.append(bonus)
 
     def is_collided_with_paddle(self, bonus: Bonus) -> bool:

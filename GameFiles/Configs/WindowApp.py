@@ -51,6 +51,8 @@ Surface = (Center[0], H - 120)
 
 MusicKit = (right - 170, H - 120)
 
+H_Hidden = H + 10
+
 # vsync = True
 vsync = False
 

@@ -22,7 +22,7 @@ class MusicKit:
         OFFSET_X = 60
 
     class Targets:
-        HIDDEN = (WC.MusicKit[0], WC.H)
+        HIDDEN = (WC.MusicKit[0], WC.H_Hidden)
         ACTIVE = WC.MusicKit
 
     def __init__(self, paddle: Paddle, pause_menu: PauseMenu, render: Renderer = None):
@@ -92,8 +92,15 @@ class MusicKit:
     def size(self):
         return self.surface.rect.size
 
+    @property
+    def overdrawn(self) -> bool:
+        return self.pos[1] >= WC.H
+
 
     def draw(self):
+
+        if self.overdrawn:
+            return
 
         with self.surface.capture():
 

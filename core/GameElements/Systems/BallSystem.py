@@ -120,7 +120,6 @@ class BallSystem:
     def update(self):
 
         for ball in self.Balls[:]:
-
             ball.update()
 
             if ball.is_sticky:
@@ -129,7 +128,6 @@ class BallSystem:
                 ball.hitbox.centerx = lerp(ball.hitbox.centerx, self.paddle.hitbox.centerx, 0.2)
                 ball.hitbox.bottom = lerp(ball.hitbox.bottom,
                                           self.paddle.hitbox.top - 5 - (15 * value), 0.5)
-
 
                 continue
 
@@ -154,13 +152,21 @@ class BallSystem:
 
                 if self.paddle.is_dead:
                     self.end_game()
-                    self.is_end_game = True
+                    # self.is_end_game = True
 
             if (ball.direction.y > 0 and ball.hitbox.colliderect(self.paddle.hitbox)
                     and self.paddle.is_alive and not self.is_passed_level):
+
+                if self.paddle.is_sticky:
+                    ball.is_sticky = True
+                    continue
+
+
                 # ball.direction = self.collide(ball.direction, ball.hitbox, ball.paddle)
                 ball.direction.reflect_y(True)
-                ball.direction.x = self.get_paddle_direction(ball.center.x, self.paddle.hitbox.centerx)
+
+                if self.paddle.is_mirrory:
+                    ball.direction.x = self.get_paddle_direction(ball.center.x, self.paddle.hitbox.centerx)
                 ball.direction.normalize()
                 App.sfx.pos_play("ball hit", ball.pos.x)
 

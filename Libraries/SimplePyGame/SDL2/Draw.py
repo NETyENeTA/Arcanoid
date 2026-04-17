@@ -4,7 +4,7 @@ from pygame.time import get_ticks
 from Libraries.SimplePyGame.Color import Color
 from Libraries.SimplePyGame.Colors import Colors
 
-from math import sin, cos, pi
+from math import sin, cos, pi, atan2
 
 
 def draw_horizontal_line(render, x1, x2, y, thickness: int = 1, color: Color | tuple = Colors.BLACK):
@@ -172,3 +172,88 @@ def draw_dashed_circle(renderer, center, radius, color=(0, 255, 0),
             # Если нужна толщина, можно нарисовать рядом еще линии или fill_rect
             if width > 1:
                 renderer.fill_rect(pg.Rect(int(x1) - width // 2, int(y1) - width // 2, width, width))
+
+
+def draw_animated_line(
+    renderer,
+    start_pos,
+    end_pos,
+    color=(255, 255, 0),
+    dash_len=10,
+    gap_len=5,
+    width=3,
+    speed=30,
+):
+    """Рисует анимированную пунктирную линию с использованием вашего renderer.
+
+    :param renderer: Объект рендерера (должен иметь метод fill_rect и свойство
+    draw_color).
+    :param start_pos: Кортеж (x, y) начала линии.
+    :param end_pos: Кортеж (x, y) конца линии.
+    """
+    # Установка цвета через свойство вашего рендерера
+    renderer.draw_color = color
+
+    p1 = pg.math.Vector2(start_pos)
+    p2 = pg.math.Vector2(end_pos)
+
+    # Вычисление вектора направления и длины
+    direction = p2 - p1
+    total_length = direction.length()
+
+    if total_length == 0:
+        return
+
+    direction.normalize_ip()
+
+    total_step = dash_len + gap_len
+    offset = (pg.time.get_ticks() * speed / 1000) % total_step
+
+    # Вычисляем угол наклона линии для правильного поворота "прямоугольников"
+    # Это нужно, чтобы толщина линии (width) корректно ложилась под наклоном
+    angle = atan2(direction.y, direction.x)
+    cos_a = cos(angle)
+    sin_a = sin(angle)
+
+    current_dist = -offset
+
+    while current_dist < total_length:
+        dash_start_dist = max(0, current_dist)
+        dash_end_dist = min(current_dist + dash_len, total_length)
+
+        if dash_start_dist < dash_end_dist:
+            # Длина конкретно этого штриха
+            current_dash_len = dash_end_dist - dash_start_dist
+
+            # Находим центр штриха
+            mid_dist = dash_start_dist + current_dash_len / 2
+            mid_pos = p1 + direction * mid_dist
+
+            # Рисуем штрих через fill_rect.
+            # Если линия идет под наклоном, мы аппроксимируем её точками/квадратами.
+            # Для идеальной сплошной линии под углом нужен полигон, но для пунктира
+            # отрисовка через маленькие повернутые заполнения работает отлично.
+            if abs(cos_a) > abs(sin_a):
+                # Линия ближе к горизонтальной
+                for step in range(int(current_dash_len)):
+                    pos = (
+                        p1
+                        + direction * (dash_start_dist + step)
+                        - pg.math.Vector2(0, width // 2)
+                    )
+                    renderer.fill_rect(
+                        pg.Rect(int(pos.x), int(pos.y), 1, width)
+                    )
+            else:
+                # Линия ближе к вертикальной
+                for step in range(int(current_dash_len)):
+                    pos = (
+                        p1
+                        + direction * (dash_start_dist + step)
+                        - pg.math.Vector2(width // 2, 0)
+                    )
+                    renderer.fill_rect(
+                        pg.Rect(int(pos.x), int(pos.y), width, 1)
+                    )
+
+        current_dist += total_step

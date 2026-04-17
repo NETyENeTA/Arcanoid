@@ -42,7 +42,7 @@ class Application:
         render = Renderer(sc, vsync=WC.vsync)
         self.info()
 
-        render.logical_size = AppConfigs.Resolution.WH
+        # render.logical_size = AppConfigs.Resolution.WH
         AppConfigs.Screen = ScreenLib.Screen(sc=sc, render=render)
         self.sc = sc
         self.render = render

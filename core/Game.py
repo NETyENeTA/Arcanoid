@@ -1,4 +1,5 @@
 # Python Lib
+from DateTime.Task import Task
 from Event.Event import Event
 from Event.CommandStuff.Command import Command
 from Libraries.Python.List import get_at
@@ -8,6 +9,7 @@ from Libraries.SimplePyGame.Colors import Colors
 from Libraries.SimplePyGame.Color import Color
 
 from Libraries.SimplePyGame.DateTime.Timer import Timer
+from Libraries.SimplePyGame.DateTime.TimerExecuteable import TimerExecutable
 from Libraries.SimplePyGame.Positions import Vec2
 from Libraries.SimplePyGame.UI.Mouse import Mouse
 
@@ -47,6 +49,8 @@ class Game:
 
     def restart(self):
         App.Runtime.IsPause = False
+        self.Stopwatch.Tasks.clear()
+        Command.clear_tasks()
         self.__init__(self.sc, self.render)
 
     def start_next_game(self):
@@ -81,7 +85,10 @@ class Game:
         App.LightS.add(Vec2(WC.Center[0], WC.bottomLights), Colors.GRAY, render)
         # App.LightS.add(Vec2((WC.Center_right_box[0], WC.bottomLights), 610), Colors.RED, render)
 
-        self.Stopwatch = Timer(60*3, pause=True)
+        self.Stopwatch = TimerExecutable(60*4, pause=True, command=self.end_game, tasks=
+        [
+            Task(30, Command(self.red_seconds, loops=0, delay=1.5), True)
+        ])
 
         self.player: Paddle = Paddle(
             (App.Resolution.W // 2, App.Resolution.H - PS.Offset_collision[1]),
@@ -147,6 +154,9 @@ class Game:
         self.PauseMenu = PauseMenu(self.player, self.restart)
         self.MusicKit = MusicKit(self.player, self.PauseMenu)
 
+    def red_seconds(self):
+        self.player.RedSecs = Paddle.Default.RedSecs
+
     def activate_any_gun(self):
         self.GunS.activate_gun()
 
@@ -182,10 +192,17 @@ class Game:
 
         Command(self.start_next_game).invoke(timeout=4)
 
+    def kill_player(self):
+        self.player.health -= 1
+
     def end_game(self):
 
         self.PauseMenu.switch_active(True)
         self.Stopwatch.switch_pause(True)
+
+        self.BallS.is_end_game = True
+        # self.player.health = -1
+        Command(self.kill_player).invoke(loops=self.player.health + 1, timeout=0.2)
 
         self.status = Game.Status.GameOver
         self.Texts[2].value = self.player.info
@@ -200,9 +217,11 @@ class Game:
             App.tick()
             App.FPSCounter.tick()
             App.AudioS.update()
-            App.Screen.screen.title = f"FPS:{int(App.Clock.get_fps())} AVG:{int(App.FPSCounter.avg)}, dt:{App.dt}"
+            # App.Screen.screen.title = f"FPS:{int(App.Clock.get_fps())} AVG:{int(App.FPSCounter.avg)}, dt:{App.dt}"
 
             Command.update_schedule()
+            if self.status == Game.Status.Playing:
+                self.Stopwatch.update()
 
             self.events()
             self.PauseMenu.update()
@@ -312,8 +331,11 @@ class Game:
                         self.BonusS.is_stickyBall_here = False
 
                 elif event.key == pg.K_TAB:
+                    print(event)
                     if App.cheat:
                         self.auto_complete()
+                    elif event.mod == 1:
+                        App.AudioS.play_prev()
                     else:
                         App.AudioS.play_next()
 
@@ -362,7 +384,8 @@ class Game:
             helper = [cheat for cheat in App.cheats if cheat != 'help' or cheat != App.cheat] \
                 if App.cheat == "help" else matches
 
-            # print(helper, App.cheat, get == App.cheat)
+            if App.cheat == "help":
+                helper[0] = f" {helper[0]}"
 
             App.FontS.draw_text(
                 text=" \n ".join(helper),

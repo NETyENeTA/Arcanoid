@@ -10,7 +10,7 @@ from core.App import AppConfigs as App
 import GameFiles.Settings.Player as PlayerSettings
 import GameFiles.Configs.WindowApp as WindowConfigs
 
-from Libraries.SimplePyGame.SDL2.Draw import draw_circular_dashed_rect as draw_circular
+from Libraries.SimplePyGame.SDL2.Draw import draw_circular_dashed_rect as draw_circular, draw_animated_line
 
 
 class Paddle(Block):
@@ -23,6 +23,9 @@ class Paddle(Block):
     class Default:
         Health = 3
         PauseTick = 1
+        RedSecs = 0.3
+        StickySecs = 10
+        MirrorSecs = 20
 
     total_width = Heart.W * Default.Health + Heart.Between * (Default.Health - 1)
 
@@ -61,6 +64,10 @@ class Paddle(Block):
         self.isBlack = True
         self.Damaged = False
         self.SecondsDamaged = 0
+
+        self.RedSecs = 0
+        self.StickySecs = 0
+        self.MirrorSecs = 0
 
         self.started = False
         self.StartText = Text(self.render, (0, 0), "[SPACE]", ("prstart", 12), Colors.WHITE)
@@ -153,6 +160,15 @@ class Paddle(Block):
             if self.SecondsDamaged < 0:
                 self.Damaged = False
 
+        if self.RedSecs > 0:
+            self.RedSecs -= App.dt
+
+        if self.is_sticky:
+            self.StickySecs -= App.dt
+
+        if self.is_mirrory:
+            self.MirrorSecs -= App.dt
+
         if App.CurrentController == App.ControlMode.Keyboard:
             self.controls()
         elif App.CurrentController == App.ControlMode.Mouse:
@@ -185,11 +201,37 @@ class Paddle(Block):
     def bounce(self, y: int | float):
         self.target_y += y
 
+    @property
+    def is_sticky(self):
+        return self.StickySecs > 0
+
+    @property
+    def is_mirrory(self):
+        return self.MirrorSecs > 0
+
+    @property
+    def is_red_secs(self):
+        return self.RedSecs > 0
+
     def draw(self):
 
         # off draw
         if self.is_overdrawn:
             return
+
+        if self.is_sticky or self.is_mirrory:
+
+            draw_animated_line(self.render,
+                                (self.hitbox.left, self.hitbox.top - 2),
+                                (self.hitbox.centerx, self.hitbox.top - 2),
+                                   Colors.GREEN.rgb if self.is_sticky else Colors.CYAN.rgb,
+                               speed=-60 if self.is_sticky else 60)
+
+            draw_animated_line(self.render,
+                               (self.hitbox.centerx, self.hitbox.top - 2),
+                               (self.hitbox.right, self.hitbox.top - 2),
+                                   Colors.GREEN.rgb if self.is_sticky else Colors.CYAN.rgb,
+                               speed=60 if self.is_sticky else -60)
 
         if self.Damaged or self.is_dead:
             draw_circular(
@@ -198,6 +240,7 @@ class Paddle(Block):
             )
         else:
             super().draw()
+
 
         for i in range(min(self.health, self.Default.Health)):
             pos = (
@@ -212,7 +255,7 @@ class Paddle(Block):
                 text=self.time,
                 name="prstart",
                 size=12,
-                color=Colors.BLACK.rgb,
+                color=Colors.RED.rgb if self.RedSecs > 0 else Colors.BLACK.rgb,
                 pos=(self.hitbox.left + 10, self.hitbox.top - 18)
             )
 

@@ -15,13 +15,15 @@ class Command:
         MY_NAME = "command_object"
 
     def __init__(self, action: Callable | None, *args, action_name: str | None = None, delay: int | float = None,
-                 ability_canceled_delete: bool = False, funcs_args: list = None,
+                 ability_canceled_delete: bool = False, funcs_args: list = None, loops: int = Default.LOOPS,
                  **kwargs):
 
         self.action: Callable | None = action
         self.args = args
         self.func_args = funcs_args or []
         self.kwargs = kwargs
+
+        self.loops: int = loops
 
         self.delay = delay
         self.__canceled = False
@@ -50,10 +52,13 @@ class Command:
                        delay=_delay, ability_canceled_delete=_cancelDelete, funcs_args=_funcs_args, **_kwargs)
 
     def invoke(self, manager: CommandManager | None = None,
-               timeout: int | float = None, loops: int = Default.LOOPS, locked: bool = False):
+               timeout: int | float = None, loops: int = None, locked: bool = False):
         """Регистрирует команду в менеджере (рекомендуемый способ)"""
         self.__canceled = locked
         wait_time = timeout if timeout is not None else self.delay
+        loops = self.loops if loops is None else loops
+        print(loops, self.__repr__())
+
 
         if wait_time is None or wait_time <= 0:
             self()
@@ -76,6 +81,7 @@ class Command:
 
         self.__canceled = locked
         wait_time = timeout if timeout is not None else self.delay
+        loops = loops or self.loops
 
         if wait_time is None or wait_time <= 0:
             self()
@@ -85,8 +91,8 @@ class Command:
 
         pg.time.set_timer(event.value, int(wait_time * 1000), loops=loops)
 
-    def sign_schedule(self, timeout: float | int = None, loops: int = Default.LOOPS, locked: bool = False):
-        self.schedule(self, timeout, loops, locked)
+    def sign_schedule(self, timeout: float | int = None, loops: int = None, locked: bool = False):
+        self.schedule(self, timeout, self.loops if loops is None else loops, locked)
 
     @staticmethod
     def schedule(command: 'Command', timeout: float | int = None, loops: int = Default.LOOPS, locked: bool = False):
@@ -107,9 +113,18 @@ class Command:
         now = pg.time.get_ticks()
         for task in cls._tasks[:]:
             task.update(now)
-            if (task.is_finished or
-                    task.Command.is_canceled and task.Command.CancelDelete):
-                cls._tasks.remove(task)
+
+            is_finished = getattr(task, 'is_finished', False)
+            is_canceled = getattr(task.Command, 'is_canceled', False)
+            cancel_delete = getattr(task.Command, 'CancelDelete', False)
+
+            # Объединяем оба сценария удаления в одно понятное условие
+            if is_finished or (is_canceled and cancel_delete):
+                try:
+                    cls._tasks.remove(task)
+                except ValueError:
+                    # Если сработал clear_tasks, игнорируем ошибку отсутствия задачи в списке
+                    pass
 
     @property
     def is_canceled(self) -> bool:
@@ -131,6 +146,11 @@ class Command:
         _kwargs = {**kwargs, **self.kwargs}
 
         return self.action(*_args, **_kwargs)
+
+    @classmethod
+    def clear_tasks(cls):
+        cls._tasks = []
+
 
 
     def __str__(self):

@@ -23,7 +23,7 @@ class PauseMenu:
 
     class Targets:
 
-        DISABLED = (WC.Center[0], WC.H)
+        DISABLED = (WC.Center[0], WC.H_Hidden)
         ENABLED = WC.Surface
 
     def __init__(self, paddle: Paddle, restart: Callable, render: Renderer = None):
@@ -154,7 +154,15 @@ class PauseMenu:
     def update(self):
         self.surface.rect.y = lerp(self.surface.rect.y, self.target[1], 0.1)
 
+    @property
+    def overdrawn(self):
+        return self.pos[1] >= WC.H
+
     def draw(self):
+
+        if self.overdrawn:
+            return
+
         with self.surface.capture():
             # self.render.draw_color = Colors.RED.rgb
             # self.render.fill_rect(pg.Rect(10, 10, 30, 30))

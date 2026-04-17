@@ -29,6 +29,7 @@ class Task:
             elif self.loops == 0:  # Бесконечно
                 self.deadline = now + self.delay_ms
             else:
+                print("I'm sorry :(", self.__repr__())
                 self.is_finished = True
 
 

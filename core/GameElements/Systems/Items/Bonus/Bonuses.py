@@ -1,6 +1,6 @@
 from Event.CommandStuff.Command import Command
 from Libraries.Python.Mixin import InspectorMixin
-from Libraries.SimplePyGame.Colors import Colors
+from Libraries.SimplePyGame.Colors import Colors, Color
 from Libraries.SimplePyGame.Positions import Vec2
 from core.GameElements.Systems.Items.Bonus.Bonus import Bonus
 from core.GameElements.Systems.Items.Bonus.BonusColors import BonusColors
@@ -17,6 +17,9 @@ class Bonuses:
             ADDED_STICKY_BALL = BonusColors(Colors.CYAN, Colors.WHITE, Colors.BLACK)
             GUN_PISTOLS = BonusColors(Colors.RED, Colors.WHITE, Colors.BLACK)
             GIVE_LIFE = BonusColors(Colors.PINK, Colors.WHITE, Colors.BLACK)
+            STICKY_PADDLE = BonusColors(Color(150,255,150), Colors.WHITE, Colors.BLACK)
+            MIRROR_PADDLE = BonusColors(Color(150,150,255), Colors.WHITE, Colors.BLACK)
+
 
         class FakeRates(InspectorMixin):
             WIDE_PADDLE = 0.4
@@ -25,6 +28,8 @@ class Bonuses:
             ADDED_STICKY_BALL = 0.5
             GUN_PISTOLS = 0.4
             GIVE_LIFE = 0.8
+            STICKY_PADDLE = 0.2
+            MIRROR_PADDLE = 0.2
 
 
     @staticmethod

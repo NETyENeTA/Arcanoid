@@ -15,7 +15,6 @@ class ShadowCaster:
         self._shadow_texture = Texture.from_surface(self.render, mask_surf)
         # Включаем возможность менять прозрачность и цвет
         self._shadow_texture.blend_mode = BLENDMODE_BLEND
-        # self._shadow_texture.blend_mode = 1
 
     def cast_shadow(self):
         for light in App.LightS.Lights:
