@@ -19,7 +19,7 @@ class Logo:
         self.text = Text(self.render, (0,0), "LogoType", ("prstart", 32), Colors.BLACK.rgb)
         self.text.rect.centerx = WC.Center[0]
 
-        self.Timer = 10
+        self.Timer = 4
 
 
 
@@ -27,7 +27,9 @@ class Logo:
         while self.On:
 
             App.tick()
+            self.text.value = f"LogoType {25 * self.Timer:.1f}"
             self.text.rect.centery = lerp(self.text.rect.centery, WC.Center[1], 0.025)
+            self.text.rect.centerx = WC.Center[0]
 
             self.Timer -= App.dt
             if self.Timer <= 0:

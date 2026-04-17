@@ -50,7 +50,7 @@ class PauseMenu:
                               Command(self.resume)),
             InteractiveButton(Vec2.Zero,
                               Text(self.render, Vec2.Zero, "Options", ("koulen", 25), Colors.BLACK),
-                              Command(None)),
+                              Command(None), disabled=True),
             InteractiveButton(Vec2.Zero,
                               Text(self.render, Vec2.Zero, "Exit", ("koulen", 25), Colors.BLACK),
                               Command(App.stop)),

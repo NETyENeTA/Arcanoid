@@ -1,18 +1,16 @@
 # from sys import flags
 
-# import Game as GameCore
-
 import pygame as pg
 from pygame._sdl2 import Window, Renderer, get_drivers
 
 from Libraries.SimplePyGame.Audio.AudioSystem import AudioSystem
 from Libraries.SimplePyGame.Audio.SFXSystem import SFXSystem
 from Libraries.SimplePyGame.SDL2.Text.FontSystem import FontSystem
-from Libraries.SimplePyGame.UI.Mouse import Mouse
+
 from core.App import AppConfigs, ScreenLib, WindowConfig as WC
 from core.GameElements.Cursor import Cursor
 from core.GameElements.Systems.LightSystem import LightSystem
-from core.Game import Game
+
 
 from os.path import dirname, join, abspath
 

@@ -85,7 +85,7 @@ class Game:
         App.LightS.add(Vec2(WC.Center[0], WC.bottomLights), Colors.GRAY, render)
         # App.LightS.add(Vec2((WC.Center_right_box[0], WC.bottomLights), 610), Colors.RED, render)
 
-        self.Stopwatch = TimerExecutable(60*4, pause=True, command=self.end_game, tasks=
+        self.Stopwatch = TimerExecutable(40, pause=True, command=self.end_game, tasks=
         [
             Task(30, Command(self.red_seconds, loops=0, delay=1.5), True)
         ])
